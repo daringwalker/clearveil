@@ -41,6 +41,17 @@ not liable for direct, indirect, or other consequences arising from its use. See
 > usable, while distribution packaging and cross-desktop compatibility are
 > still being prepared for a public beta.
 
+## Screenshots
+
+![Clearveil's default image-viewing interface](docs/assets/screenshots/clearveil-main.png)
+
+![Clearveil's folder browser](docs/assets/screenshots/clearveil-folder-browser.png)
+
+These screenshots were captured on KDE Plasma/Wayland with a fresh default
+configuration. The example images come from the NASA Image and Video Library;
+see the [documentation asset credits](docs/assets/README.md) for image IDs,
+source links, and usage information. NASA does not endorse Clearveil.
+
 ## Highlights
 
 - Single-instance multi-file sessions and a switchable current-folder filmstrip

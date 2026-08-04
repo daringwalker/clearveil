@@ -33,6 +33,16 @@ Clearveil 是维护者依据本人使用习惯和兴趣开发的个人项目，�
 > Clearveil 目前处于早期测试阶段。基本查看流程已经可用，但公开发布、发行版打包和
 > 不同桌面环境下的兼容性仍在完善。
 
+## 界面截图
+
+![Clearveil 默认图片查看界面](docs/assets/screenshots/clearveil-main.png)
+
+![Clearveil 文件夹浏览界面](docs/assets/screenshots/clearveil-folder-browser.png)
+
+截图使用全新的默认配置在 KDE Plasma/Wayland 下实机采集。示例图片来自 NASA
+Image and Video Library，具体图片编号、来源链接和使用说明见
+[文档资源说明](docs/assets/README.md)；NASA 不为 Clearveil 提供背书。
+
 ## 主要能力
 
 - 单实例、多文件打开列表和当前文件夹两种缩略图来源；

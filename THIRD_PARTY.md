@@ -17,3 +17,7 @@ Clearveil 本身以 GPL-3.0-or-later 发布。构建和运行时使用以下主�
 
 KDE Breeze 的颜色值参照其公开的 `BreezeLight.colors` 与 `BreezeDark.colors`；Clearveil
 不打包 Breeze 控件风格，运行时仅在系统已提供相应 Qt 插件时加载。
+
+仓库文档截图中展示了 NASA Image and Video Library 的地球观测图片。这些原始图片
+不按 Clearveil 的 GPL 许可证重新授权，图片编号、官方来源及 NASA 使用规则链接见
+[`docs/assets/README.md`](docs/assets/README.md)。NASA 不为 Clearveil 提供背书。

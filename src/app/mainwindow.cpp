@@ -3166,64 +3166,66 @@ void MainWindow::loadSettings()
             m_settings.favoriteFolders);
     }
     QStringList storedToolbarLayout = m_settings.toolbarLayout;
-    for (qsizetype index = storedToolbarLayout.size();
-         index-- > 0;) {
-        QString id = storedToolbarLayout.at(index);
-        if (id.startsWith(QLatin1Char('!')))
-            id.remove(0, 1);
-        if (id == QStringLiteral("ocr_text")
-            || id == QStringLiteral("recognize_text")) {
-            storedToolbarLayout.removeAt(index);
+    if (storedToolbarLayout.isEmpty()) {
+        // An empty list means no toolbar preference has ever been saved.
+        // Apply the complete first-run layout before running migrations;
+        // inserting newly introduced actions into the empty list would turn
+        // it into an accidental three-button custom layout.
+        m_settings.toolbarLayout =
+            m_actionRegistry->defaultToolbarLayout();
+    } else {
+        for (qsizetype index = storedToolbarLayout.size();
+             index-- > 0;) {
+            QString id = storedToolbarLayout.at(index);
+            if (id.startsWith(QLatin1Char('!')))
+                id.remove(0, 1);
+            if (id == QStringLiteral("ocr_text")
+                || id == QStringLiteral("recognize_text")) {
+                storedToolbarLayout.removeAt(index);
+            }
         }
-    }
-    const auto hasToolbarItem = [&storedToolbarLayout](
-        const QString &id) {
-        return std::any_of(
-            storedToolbarLayout.cbegin(),
-            storedToolbarLayout.cend(),
-            [&id](const QString &item) {
-                return item == id
-                    || item == QStringLiteral("!") + id;
-            });
-    };
-    int colorPickerIndex = -1;
-    for (int index = 0; index < storedToolbarLayout.size();
-         ++index) {
-        const QString &item = storedToolbarLayout.at(index);
-        if (item == QStringLiteral("color_picker")
-            || item == QStringLiteral("!color_picker")) {
-            colorPickerIndex = index;
-            break;
+        const auto hasToolbarItem = [&storedToolbarLayout](
+            const QString &id) {
+            return std::any_of(
+                storedToolbarLayout.cbegin(),
+                storedToolbarLayout.cend(),
+                [&id](const QString &item) {
+                    return item == id
+                        || item == QStringLiteral("!") + id;
+                });
+        };
+        int colorPickerIndex = -1;
+        for (int index = 0; index < storedToolbarLayout.size();
+             ++index) {
+            const QString &item = storedToolbarLayout.at(index);
+            if (item == QStringLiteral("color_picker")
+                || item == QStringLiteral("!color_picker")) {
+                colorPickerIndex = index;
+                break;
+            }
         }
+        if (colorPickerIndex < 0)
+            colorPickerIndex = storedToolbarLayout.size();
+        if (!hasToolbarItem(QStringLiteral("pointer_hand"))) {
+            storedToolbarLayout.insert(
+                colorPickerIndex++, QStringLiteral("pointer_hand"));
+        }
+        if (!hasToolbarItem(QStringLiteral("text_select"))) {
+            storedToolbarLayout.insert(
+                colorPickerIndex, QStringLiteral("text_select"));
+        }
+        if (!hasToolbarItem(QStringLiteral("filmstrip_source"))) {
+            const int filmstripIndex = storedToolbarLayout.indexOf(
+                QStringLiteral("filmstrip"));
+            storedToolbarLayout.insert(
+                filmstripIndex >= 0 ? filmstripIndex + 1
+                                    : storedToolbarLayout.size(),
+                QStringLiteral("filmstrip_source"));
+        }
+        m_settings.toolbarLayout =
+            m_actionRegistry->normalizedToolbarLayout(
+                storedToolbarLayout);
     }
-    if (colorPickerIndex < 0)
-        colorPickerIndex = storedToolbarLayout.size();
-    if (!hasToolbarItem(QStringLiteral("pointer_hand"))) {
-        storedToolbarLayout.insert(
-            colorPickerIndex++, QStringLiteral("pointer_hand"));
-    }
-    if (!hasToolbarItem(QStringLiteral("text_select"))) {
-        storedToolbarLayout.insert(
-            colorPickerIndex, QStringLiteral("text_select"));
-    }
-    const bool hasFilmstripSourceItem = std::any_of(
-        storedToolbarLayout.cbegin(), storedToolbarLayout.cend(),
-        [](const QString &item) {
-            return item == QStringLiteral("filmstrip_source")
-                || item == QStringLiteral("!filmstrip_source");
-        });
-    if (!storedToolbarLayout.isEmpty()
-        && !hasFilmstripSourceItem) {
-        const int filmstripIndex = storedToolbarLayout.indexOf(
-            QStringLiteral("filmstrip"));
-        storedToolbarLayout.insert(
-            filmstripIndex >= 0 ? filmstripIndex + 1
-                                : storedToolbarLayout.size(),
-            QStringLiteral("filmstrip_source"));
-    }
-    m_settings.toolbarLayout = m_actionRegistry->normalizedToolbarLayout(
-        storedToolbarLayout.isEmpty()
-            ? m_actionRegistry->defaultToolbarLayout() : storedToolbarLayout);
     applyToolbarLayout();
     const QStringList storedShortcutLayout = m_settings.shortcutLayout;
     m_settings.shortcutLayout = m_actionRegistry->normalizedShortcutLayout(

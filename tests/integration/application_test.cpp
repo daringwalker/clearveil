@@ -3407,6 +3407,11 @@ void CoreTest::browserRestoresPerDirectoryState()
 
 void CoreTest::mainToolbarCompactsWithoutOverflow()
 {
+    QSettings settings;
+    const QVariant savedToolbarLayout = settings.value(
+        QStringLiteral("ui/toolbarLayout"));
+    settings.remove(QStringLiteral("ui/toolbarLayout"));
+
     const auto iconShapeStable = [](const QIcon &icon) {
         const auto mask = [&icon](int extent) {
             const QImage source = icon.pixmap(
@@ -3477,6 +3482,8 @@ void CoreTest::mainToolbarCompactsWithoutOverflow()
     auto *toolbar = window.findChild<QToolBar *>(
         QStringLiteral("mainToolbar"));
     QVERIFY(toolbar);
+    QVERIFY2(toolbar->actions().size() >= 20,
+             "The first-run toolbar must expose the common viewer actions");
     QCOMPARE(window.minimumWidth(), 820);
     QVERIFY(toolbar->property("compact").toBool());
     QCOMPARE(toolbar->iconSize(), QSize(18, 18));
@@ -3584,6 +3591,13 @@ void CoreTest::mainToolbarCompactsWithoutOverflow()
     QVERIFY2(inspectedSettingsIcons,
              qPrintable(settingsIconFailure));
     QVERIFY(redundantInformationActionAbsent);
+
+    if (savedToolbarLayout.isValid()) {
+        settings.setValue(QStringLiteral("ui/toolbarLayout"),
+                          savedToolbarLayout);
+    } else {
+        settings.remove(QStringLiteral("ui/toolbarLayout"));
+    }
 }
 
 void CoreTest::windowChromePopupAndDragRegionsAreUsable()

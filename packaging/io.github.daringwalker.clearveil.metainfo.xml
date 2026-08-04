@@ -24,6 +24,18 @@
   <launchable type="desktop-id">io.github.daringwalker.clearveil.desktop</launchable>
   <provides><binary>clearveil</binary></provides>
   <categories><category>Graphics</category><category>Viewer</category></categories>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/daringwalker/clearveil/main/docs/assets/screenshots/clearveil-main.png</image>
+      <caption>View multiple images in one focused window</caption>
+      <caption xml:lang="zh-CN">在一个简洁窗口中查看多张图片</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/daringwalker/clearveil/main/docs/assets/screenshots/clearveil-folder-browser.png</image>
+      <caption>Browse the current folder without leaving Clearveil</caption>
+      <caption xml:lang="zh-CN">无需离开 Clearveil 即可浏览当前文件夹</caption>
+    </screenshot>
+  </screenshots>
   <releases>
     <release version="0.2.0-beta.1" date="2026-08-04" type="development">
       <description>
