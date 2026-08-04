@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 安全问题 / Security issue
+    url: https://github.com/daringwalker/clearveil/security/advisories/new
+    about: 请私下报告尚未修复的安全问题。
+  - name: 使用与构建文档
+    url: https://github.com/daringwalker/clearveil/tree/main/docs
+    about: 提问前请先查看安装、格式支持和故障排查文档。

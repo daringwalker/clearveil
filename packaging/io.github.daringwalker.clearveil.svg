@@ -1,0 +1,20 @@
+<!-- SPDX-FileCopyrightText: 2026 daringwalker -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
+  <defs>
+    <linearGradient id="sky" x1="20" y1="12" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#74b7ff"/>
+      <stop offset="1" stop-color="#6557d9"/>
+    </linearGradient>
+    <linearGradient id="veil" x1="24" y1="44" x2="104" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".92"/>
+      <stop offset="1" stop-color="#dff6ff" stop-opacity=".62"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="27" fill="url(#sky)"/>
+  <circle cx="88" cy="40" r="12" fill="#ffe48a"/>
+  <path d="M19 91 48 59l17 18 13-13 31 30v8H19z" fill="#314f8c" opacity=".62"/>
+  <path d="M18 83c17-12 30-11 44-2 13 9 26 11 48-1v23H18z" fill="url(#veil)"/>
+  <path d="M28 48c9-12 24-13 34-4 6-10 22-10 28 1 11-2 20 5 20 14H25c-7 0-7-8 3-11z"
+        fill="#fff" opacity=".86"/>
+</svg>

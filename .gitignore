@@ -1,0 +1,17 @@
+/build/
+/build-*/
+/cmake-build-*/
+/dist/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/_CPack_Packages/
+/.cache/
+/.flatpak-builder/
+/.agents/
+/.codex/
+/compile_commands.json
+*.user
+*.swp
+*~

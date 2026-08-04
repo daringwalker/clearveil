@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.compiler }}
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - compiler: GCC
+            cc: gcc
+            cxx: g++
+          - compiler: Clang
+            cc: clang
+            cxx: clang++
+    steps:
+      - name: Install build dependencies
+        run: >-
+          pacman -Syu --noconfirm
+          cmake ninja pkgconf
+          qt6-base qt6-svg qt6-tools
+          exiv2 libcolord libvips
+          tesseract tesseract-data-eng tesseract-data-chi_sim
+          appstream desktop-file-utils flatpak-builder
+          ${{ matrix.compiler == 'Clang' && 'clang' || 'gcc' }}
+
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Check repository hygiene
+        run: |
+          bash tools/check_repository_hygiene.sh
+          bash tools/check_release_metadata.sh
+
+      - name: Configure
+        env:
+          CC: ${{ matrix.cc }}
+          CXX: ${{ matrix.cxx }}
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DBUILD_TESTING=ON
+          -DCLEARVEIL_BUILD_BENCHMARKS=OFF
+          -DCLEARVEIL_WARNINGS_AS_ERRORS=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Create and inspect source package
+        run: |
+          cpack --config build/CPackSourceConfig.cmake -G TGZ -B package
+          bash tools/check_source_archive.sh package/clearveil-*-Source.tar.gz
+
+  ubuntu:
+    name: Ubuntu 24.04
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Install build and OCR dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential cmake ninja-build pkg-config \
+            qt6-base-dev libqt6svg6-dev qt6-l10n-tools \
+            libexiv2-dev libcolord-dev libvips-dev \
+            libtesseract-dev tesseract-ocr \
+            tesseract-ocr-eng tesseract-ocr-chi-sim \
+            appstream desktop-file-utils
+
+      - name: Configure
+        run: >-
+          cmake -S . -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          -DBUILD_TESTING=ON
+          -DCLEARVEIL_BUILD_BENCHMARKS=OFF
+          -DCLEARVEIL_WARNINGS_AS_ERRORS=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Clearveil symbolic toolbar icons: 24 px grid, 2 px safe area. -->
+  <g id="previous"><path d="M20 12H5m6-6-6 6 6 6"/></g>
+  <g id="next"><path d="M4 12h15m-6-6 6 6-6 6"/></g>
+
+  <g id="zoom_out"><circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 5 5M7 10h6"/></g>
+  <g id="zoom_in"><circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 5 5M7 10h6m-3-3v6"/></g>
+  <g id="fit"><path d="M8 4H4v4m12-4h4v4M8 20H4v-4m12 4h4v-4"/><rect x="8" y="8" width="8" height="8" rx="1.2"/><path d="m9.5 14 2-2 1.5 1.5 1.5-2 1.5 2"/></g>
+  <g id="actual_size"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h2v6M7 15h4m2-5.5h.01m0 5.5h.01M16 9h2v6m-2 0h4"/></g>
+  <g id="lock_zoom"><circle cx="9" cy="9" r="5"/><path d="m12.8 12.8 2.3 2.3M14.5 17h7v5h-7zm1.7 0v-1.2a1.8 1.8 0 0 1 3.6 0V17"/></g>
+  <g id="fit_width"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M6 12h12M8.5 9.5 6 12l2.5 2.5m7-5L18 12l-2.5 2.5"/></g>
+  <g id="fit_height"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M12 6v12M9.5 8.5 12 6l2.5 2.5m-5 7L12 18l2.5-2.5"/></g>
+  <g id="fill"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m7 10-2-2m0 0h4M5 8v4m12-2 2-2m0 0h-4m4 0v4M7 14l-2 2m0 0h4m-4 0v-4m12 2 2 2m0 0h-4m4 0v-4"/></g>
+
+  <g id="rotate_left"><path d="M7 7H3V3"/><path d="M3.8 7.2A8 8 0 1 1 4 16"/></g>
+  <g id="rotate_right"><path d="M17 7h4V3"/><path d="M20.2 7.2A8 8 0 1 0 20 16"/></g>
+  <g id="crop"><path d="M7 3v13a2 2 0 0 0 2 2h12M3 7h13a2 2 0 0 1 2 2v12"/><path d="M7 7h8a2 2 0 0 1 2 2v8" opacity=".55"/></g>
+  <g id="flip_horizontal"><path d="M12 3v18" stroke-dasharray="2 2"/><path d="m4 12 6-6v12zm16 0-6-6v12z"/></g>
+  <g id="flip_vertical"><path d="M3 12h18" stroke-dasharray="2 2"/><path d="m12 4-6 6h12zm0 16-6-6h12z"/></g>
+  <g id="resize"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m9 15 6-6m-6 2v4h4m2-2V9h-4"/></g>
+  <g id="adjust"><path d="M4 6h5m4 0h7M4 12h9m4 0h3M4 18h3m4 0h9"/><circle cx="11" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="9" cy="18" r="2"/></g>
+
+  <g id="pointer_hand"><path d="M8 11V7.5a1.5 1.5 0 0 1 3 0V10m0-4V5.5a1.5 1.5 0 0 1 3 0V10m0-3.5a1.5 1.5 0 0 1 3 0V11m0-2a1.5 1.5 0 0 1 3 0v5.5A6.5 6.5 0 0 1 13.5 21h-1a6.5 6.5 0 0 1-5.4-2.9l-2.8-4.2a1.6 1.6 0 0 1 2.6-1.8L8 13.5"/></g>
+  <g id="text_select"><path d="M7 5h10M12 5v14M7 19h10"/><path d="M5 8V5h2m10 0h2v3M5 16v3h2m10 0h2v-3" opacity=".55"/></g>
+  <g id="color_picker"><path d="m14.7 3.7 5.6 5.6-2.5 2.5-1.2-1.2-7.7 7.7-4.2 1 1-4.2 7.7-7.7-1.2-1.2z"/><path d="m6 15 3 3"/></g>
+
+  <g id="checkerboard"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/><path fill="#000000" stroke="none" d="M4 4h4v4H4zm6 6h4v4h-4zm6-6h4v4h-4zM4 16h4v4H4zm12 0h4v4h-4z"/></g>
+  <g id="filmstrip"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15h18M8 5v10m8-10v10"/><circle cx="5.5" cy="8" r=".7" fill="#000000" stroke="none"/><circle cx="11" cy="8" r=".7" fill="#000000" stroke="none"/><circle cx="18.5" cy="8" r=".7" fill="#000000" stroke="none"/></g>
+  <g id="filmstrip_source"><path d="M3 7h6l2 2h10v10H3z"/><rect x="8" y="12" width="9" height="5" rx=".8"/><path d="m9.5 16 2-2 1.5 1.3 1.5-1.8L16 15"/></g>
+  <g id="browse"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></g>
+  <g id="slideshow"><rect x="3" y="4" width="18" height="16" rx="2"/><path fill="#000000" stroke="none" d="m10 8 6 4-6 4z"/></g>
+
+  <g id="fullscreen"><path d="M9 3H3v6m12-6h6v6M9 21H3v-6m12 6h6v-6"/></g>
+  <g id="open"><path d="M3 7h6l2 2h10l-2 10H4z"/><path d="M12 16v-5m-2 2 2-2 2 2"/></g>
+  <g id="trash"><path d="M4 7h16M9 4h6l1 3H8zm-3 3 1 11h10l1-11M10 11v6m4-6v6"/></g>
+  <g id="open_folder"><path d="M3 7h6l2 2h10v10H3z"/><path d="M12 12v5m-2-2 2 2 2-2"/></g>
+  <g id="save_as"><path d="M5 3h12l2 2v16H5zM8 3v6h8V3M8 21v-7h8v7"/></g>
+  <g id="copy"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></g>
+  <g id="undo"><path d="m9 7-5 5 5 5M5 12h8a6 6 0 0 1 6 6"/></g>
+  <g id="redo"><path d="m15 7 5 5-5 5m4-5h-8a6 6 0 0 0-6 6"/></g>
+
+  <g id="metadata"><circle cx="7" cy="7" r="2"/><path d="M5 11h4v9H5zM13 6h7m-7 5h7m-7 5h7"/></g>
+  <g id="print"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7z"/><circle cx="17" cy="11" r=".8" fill="#000000" stroke="none"/></g>
+  <g id="wallpaper"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m6 15 3-3 2 2 3-4 4 5M9 21h6m-3-3v3"/></g>
+  <g id="fit_window_to_image"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="7" y="8" width="10" height="8" rx="1"/><path d="M3 9h4m10 6h4"/></g>
+  <g id="borderless"><path d="M9 4H4v5m11-5h5v5M9 20H4v-5m11 5h5v-5"/><path d="M3 12h18" stroke-dasharray="2 2"/></g>
+  <g id="always_on_top"><path d="m8 4 8 4-2 3v4l2 2H8l2-2v-4L8 8zM12 17v4"/></g>
+
+  <g id="panel_float"><rect x="3" y="4" width="12" height="12" rx="1.5"/><rect x="9" y="9" width="12" height="11" rx="1.5"/><path d="m15 3h6v6m0-6-6 6"/></g>
+  <g id="panel_dock"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M14 4v16M14 12h7"/></g>
+  <g id="layout_auto"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6M7 16h10m0-5 2 2-2 2"/></g>
+  <g id="layout_horizontal"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 8v8m4-8v8m4-8v8"/></g>
+  <g id="layout_vertical"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8m-8 4h8m-8 4h8"/></g>
+  <g id="menu"><circle cx="5" cy="6" r="1" fill="#000000" stroke="none"/><circle cx="5" cy="12" r="1" fill="#000000" stroke="none"/><circle cx="5" cy="18" r="1" fill="#000000" stroke="none"/><path d="M9 6h11M9 12h11M9 18h11"/></g>
+  <g id="separator"><path d="M12 3v18"/></g>
+  <g id="spacer"><path d="M4 12h16m-12-4-4 4 4 4m8-8 4 4-4 4"/></g>
+  <g id="unknown"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9.5 9a2.5 2.5 0 1 1 3.7 2.2c-.8.4-1.2.9-1.2 1.8m0 3h.01"/></g>
+</svg>

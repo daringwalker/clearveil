@@ -1,0 +1,52 @@
+name: 缺陷报告 / Bug report
+description: 报告可重复的错误、崩溃、显示或性能问题
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请不要在公开 Issue 中上传私人图片或安全漏洞。安全问题请使用 Security Advisory。
+  - type: input
+    id: version
+    attributes:
+      label: Clearveil 版本
+      placeholder: 例如 0.2.0-beta.1 或提交哈希
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 系统环境
+      placeholder: Arch Linux、KDE 6、Wayland、Qt 6.11
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重现步骤
+      description: 请给出最小、连续的操作步骤。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: image
+    attributes:
+      label: 图片信息
+      description: 格式、尺寸、位深、文件大小；请使用可公开的测试文件。
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志或截图
+      render: shell

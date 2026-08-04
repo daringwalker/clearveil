@@ -1,0 +1,31 @@
+name: 功能建议 / Feature request
+description: 建议与快速图片查看体验相关的改进
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 要解决的问题
+      description: 描述当前工作流中的具体困难，而不只是功能名称。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议的交互
+      description: 说明入口、操作过程和结果。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案或参考
+      description: 可以附公开软件、文档或截图链接，请说明借鉴点。
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: 产品范围
+      options:
+        - label: 该建议以快速查看图片为核心，不依赖评分、标签或重型图库管理。
+          required: true

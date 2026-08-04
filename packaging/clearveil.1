@@ -1,0 +1,45 @@
+.TH CLEARVEIL 1 "August 2026" "Clearveil 0.2.0-beta.1" "User Commands"
+.SH NAME
+clearveil \- fast, friendly image viewer for Linux
+.SH SYNOPSIS
+.B clearveil
+[\fIOPTION\fR] [\fIIMAGE\fR...]
+.SH DESCRIPTION
+Clearveil (Chinese display name: Clearveil·云开见月明) is a single-instance image viewer with folder browsing,
+thumbnail navigation, animation and multi-page support, lightweight editing,
+metadata inspection, comparison, slideshow, and file management.
+.PP
+Opening more images while Clearveil is already running sends them to the
+existing application process.
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show command-line help.
+.TP
+.B \-v, \-\-version
+Show the application version.
+.SH SHORTCUTS
+.TP
+.B Ctrl+O
+Open images.
+.TP
+.B Ctrl+Shift+O
+Open a folder.
+.TP
+.B Left, Right
+Show the previous or next image.
+.TP
+.B 0, 1
+Fit to window or show at actual size.
+.TP
+.B B, T
+Toggle folder browser or thumbnail strip.
+.TP
+.B F11
+Toggle full screen.
+.SH FILES
+.TP
+.I ~/.config/Clearveil/clearveil.conf
+Per-user preferences.
+.SH LICENSE
+GPL-3.0-or-later.

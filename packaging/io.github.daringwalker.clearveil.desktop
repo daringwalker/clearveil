@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2026 daringwalker
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+[Desktop Entry]
+Type=Application
+Name=Clearveil
+Name[zh_CN]=Clearveil·云开见月明
+Comment=View and browse images
+Comment[zh_CN]=查看和浏览图片
+Exec=clearveil %U
+Icon=io.github.daringwalker.clearveil
+Terminal=false
+Categories=Graphics;Viewer;
+MimeType=image/png;image/jpeg;image/webp;image/gif;image/bmp;image/tiff;image/svg+xml;image/avif;
+StartupNotify=true

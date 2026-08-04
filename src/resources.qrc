@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="icons/clearveil.svg">../packaging/io.github.daringwalker.clearveil.svg</file>
+    <file alias="icons/toolbar-icons.svg">icons/toolbar-icons.svg</file>
+    <file alias="icons/checkbox-unchecked.svg">icons/checkbox-unchecked.svg</file>
+    <file alias="icons/checkbox-unchecked-disabled.svg">icons/checkbox-unchecked-disabled.svg</file>
+    <file alias="icons/checkbox-checked.svg">icons/checkbox-checked.svg</file>
+    <file alias="icons/checkbox-checked-disabled.svg">icons/checkbox-checked-disabled.svg</file>
+  </qresource>
+</RCC>

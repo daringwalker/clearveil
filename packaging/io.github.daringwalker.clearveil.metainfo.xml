@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-FileCopyrightText: 2026 daringwalker -->
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<component type="desktop-application">
+  <id>io.github.daringwalker.clearveil</id>
+  <name>Clearveil</name>
+  <name xml:lang="zh-CN">Clearveil·云开见月明</name>
+  <summary>A fast, friendly image viewer for Linux</summary>
+  <summary xml:lang="zh-CN">快速、易用的 Linux 图片查看器</summary>
+  <developer id="io.github.daringwalker">
+    <name>daringwalker</name>
+  </developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <description>
+    <p>Clearveil is a canvas-first image viewer designed for fast folder browsing
+    and lightweight image operations.</p>
+    <p>It supports on-demand local OCR so recognized text can be selected directly
+    on the image and copied without uploading the image.</p>
+  </description>
+  <url type="homepage">https://github.com/daringwalker/clearveil</url>
+  <url type="bugtracker">https://github.com/daringwalker/clearveil/issues</url>
+  <url type="vcs-browser">https://github.com/daringwalker/clearveil</url>
+  <launchable type="desktop-id">io.github.daringwalker.clearveil.desktop</launchable>
+  <provides><binary>clearveil</binary></provides>
+  <categories><category>Graphics</category><category>Viewer</category></categories>
+  <releases>
+    <release version="0.2.0-beta.1" date="2026-08-04" type="development">
+      <description>
+        <p>Beta release with responsive asynchronous browsing, configurable
+        layouts, improved crop and color-picker workflows,
+        color-managed display, touch gestures and expanded regression tests.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-07-28" type="development">
+      <description>
+        <p>Initial preview with fast folder browsing, metadata inspection,
+        lightweight editing, configurable layouts and Chinese localization.</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

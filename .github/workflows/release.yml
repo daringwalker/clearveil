@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install release dependencies
+        run: >-
+          pacman -Syu --noconfirm
+          cmake ninja pkgconf github-cli
+          qt6-base qt6-svg qt6-tools
+          exiv2 libcolord libvips
+          tesseract tesseract-data-eng tesseract-data-chi_sim
+
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Verify tag matches project version
+        run: |
+          bash tools/check_release_version.sh "${GITHUB_REF_NAME}"
+          bash tools/check_release_metadata.sh
+
+      - name: Build and test
+        run: |
+          cmake -S . -B build-release -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=ON \
+            -DCLEARVEIL_BUILD_BENCHMARKS=OFF
+          cmake --build build-release
+          ctest --test-dir build-release --output-on-failure
+
+      - name: Build source archive
+        run: |
+          cpack --config build-release/CPackSourceConfig.cmake \
+            -G TGZ -B release-artifacts
+          bash tools/check_source_archive.sh \
+            release-artifacts/clearveil-*-Source.tar.gz
+          archive="$(find release-artifacts -maxdepth 1 \
+            -name 'clearveil-*-Source.tar.gz' -print -quit)"
+          checksum="$(sha256sum "${archive}" | cut -d ' ' -f 1)"
+          (cd release-artifacts && sha256sum clearveil-*-Source.tar.gz > SHA256SUMS)
+          cp packaging/PKGBUILD release-artifacts/PKGBUILD
+          sed -i "s/sha256sums=('SKIP')/sha256sums=('${checksum}')/" \
+            release-artifacts/PKGBUILD
+          grep -F "sha256sums=('${checksum}')" release-artifacts/PKGBUILD
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-source-${{ github.ref_name }}
+          path: |
+            release-artifacts/clearveil-*-Source.tar.gz
+            release-artifacts/SHA256SUMS
+            release-artifacts/PKGBUILD
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_flags=(--verify-tag --generate-notes)
+          if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
+            release_flags+=(--prerelease)
+          fi
+          gh release create "${GITHUB_REF_NAME}" \
+            release-artifacts/clearveil-*-Source.tar.gz \
+            release-artifacts/SHA256SUMS \
+            release-artifacts/PKGBUILD \
+            "${release_flags[@]}"
