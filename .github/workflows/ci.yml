@@ -86,10 +86,6 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sed -i \
-            -e 's|http://archive.ubuntu.com/ubuntu|http://mirrors.ustc.edu.cn/ubuntu|g' \
-            -e 's|http://security.ubuntu.com/ubuntu|http://mirrors.ustc.edu.cn/ubuntu|g' \
-            /etc/apt/sources.list.d/ubuntu.sources
           apt-get update
           apt-get install --no-install-recommends -y \
             ca-certificates git build-essential cmake ninja-build pkg-config \
