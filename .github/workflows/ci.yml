@@ -79,15 +79,12 @@ jobs:
 
   ubuntu:
     name: Ubuntu 26.04
-    runs-on: ubuntu-latest
-    container: ubuntu:26.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Install build and OCR dependencies
-        env:
-          DEBIAN_FRONTEND: noninteractive
         run: |
-          apt-get update
-          apt-get install --no-install-recommends -y \
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
             ca-certificates git build-essential cmake ninja-build pkg-config \
             qt6-base-dev libqt6svg6-dev qt6-l10n-tools \
             libexiv2-dev libcolord-dev libvips-dev \
