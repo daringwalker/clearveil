@@ -36,6 +36,7 @@ jobs:
           qt6-base qt6-svg qt6-tools
           exiv2 libcolord libvips
           tesseract tesseract-data-eng tesseract-data-chi_sim
+          ttf-dejavu
           appstream desktop-file-utils flatpak-builder
           ${{ matrix.compiler == 'Clang' && 'clang' || 'gcc' }}
 
