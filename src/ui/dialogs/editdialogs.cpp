@@ -1055,8 +1055,8 @@ SettingsDialog::SettingsDialog(const QString &theme, const QString &language,
     mouseForm->addRow(tr("Mouse wheel"), m_wheelAction);
 
     const auto populateWheelActions =
-        [this](QComboBox *combo,
-               const QString &selected) {
+        [](QComboBox *combo,
+           const QString &selected) {
             combo->addItem(
                 tr("Scroll image"),
                 QStringLiteral("scroll"));
@@ -1092,7 +1092,7 @@ SettingsDialog::SettingsDialog(const QString &theme, const QString &language,
     mouseForm->addRow(QString(), scrollHint);
 
     const auto populatePointerActions =
-        [this](QComboBox *combo, const QString &selected) {
+        [](QComboBox *combo, const QString &selected) {
             combo->addItem(tr("Do nothing"),
                            QStringLiteral("none"));
             combo->addItem(tr("Toggle fit / actual size"),
