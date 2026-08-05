@@ -39,7 +39,7 @@ DESTDIR="${appdir}" cmake --install "${build_dir}"
 
 export QMAKE="${qmake}"
 export EXTRA_QT_MODULES="svg"
-export EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
+export EXTRA_PLATFORM_PLUGINS="libqoffscreen.so;libqwayland-egl.so;libqwayland-generic.so"
 export APPIMAGE_EXTRACT_AND_RUN=1
 export OUTPUT="${output_dir}/Clearveil-${version}-x86_64.AppImage"
 

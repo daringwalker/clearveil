@@ -207,7 +207,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
             build-essential pkg-config python3-venv curl file patchelf \
-            libgl1-mesa-dev libxkbcommon-x11-0 \
+            libdbus-1-dev libcups2-dev libgl1-mesa-dev \
+            libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 \
+            libxcb-shape0 libxcb-xinerama0 \
+            libwayland-cursor0 libwayland-egl1 \
+            libxkbcommon-dev libxkbcommon-x11-0 \
             libexiv2-dev libcolord-dev libvips-dev libtesseract-dev
 
       - name: Install CMake, Ninja, and Qt

@@ -162,7 +162,7 @@ void MetadataPanel::setImage(const QString &filePath, const QImage &image,
     if (file.exists()) {
         try {
             auto metadataImage = Exiv2::ImageFactory::open(filePath.toStdString());
-            if (metadataImage) {
+            if (metadataImage.get() != nullptr) {
                 metadataImage->readMetadata();
                 addRow(tr("MIME type"),
                        QString::fromStdString(metadataImage->mimeType()),
