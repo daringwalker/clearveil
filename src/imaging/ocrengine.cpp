@@ -15,6 +15,7 @@
 
 #ifdef CLEARVEIL_HAVE_TESSERACT
 #include <tesseract/baseapi.h>
+#include <tesseract/capi.h>
 #include <tesseract/resultiterator.h>
 #endif
 
@@ -457,13 +458,14 @@ QStringList OcrEngine::availableLanguages()
             return {};
         }
     }
-    std::vector<std::string> languages;
-    api.GetAvailableLanguagesAsVector(&languages);
+    char **languages = TessBaseAPIGetAvailableLanguagesAsVector(&api);
     api.End();
     QStringList result;
-    result.reserve(static_cast<qsizetype>(languages.size()));
-    for (const std::string &language : languages)
-        result.append(QString::fromStdString(language));
+    if (languages) {
+        for (char **language = languages; *language; ++language)
+            result.append(QString::fromUtf8(*language));
+        TessDeleteTextArray(languages);
+    }
     result.sort(Qt::CaseInsensitive);
     return usableLanguages(result);
 #else
