@@ -36,9 +36,9 @@ Clearveil 的首个公开版本为 `v0.2.0-beta.1`。根目录 `VERSION` 是应�
 使用签名标签启动 GitHub Release 工作流：
 
 ```bash
-bash tools/check_release_version.sh v0.2.1-beta.1
-git tag -s v0.2.1-beta.1 -m "Clearveil 0.2.1 beta 1"
-git push origin main v0.2.1-beta.1
+bash tools/check_release_version.sh v0.2.1-beta.2
+git tag -s v0.2.1-beta.2 -m "Clearveil 0.2.1 beta 2"
+git push origin main v0.2.1-beta.2
 ```
 
 工作流会重新构建和测试，默认生成 Arch Linux、Ubuntu 24.04 DEB、Debian 13 DEB、

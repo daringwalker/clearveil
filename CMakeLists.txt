@@ -57,6 +57,8 @@ add_library(clearveil_core
     src/viewer/canvasappearancecontroller.h
     src/ui/clearveilicon.cpp
     src/ui/clearveilicon.h
+    src/ui/inputcontextpolicy.cpp
+    src/ui/inputcontextpolicy.h
     src/ui/breezetheme.cpp
     src/ui/breezetheme.h
     src/viewer/comparewidget.cpp

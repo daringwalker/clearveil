@@ -18,7 +18,12 @@ LargeImageSampleController::LargeImageSampleController(QObject *parent)
             this, [this] {
         const Result result = m_watcher.result();
         m_busy = false;
+        const bool isLatestRequest =
+            result.request.serial == m_requestSerial;
+        const bool preservePickedRequest =
+            result.request.picked;
         if (result.generation == m_generation
+            && (isLatestRequest || preservePickedRequest)
             && result.color.isValid()
             && !result.sample.isNull()) {
             emit sampleReady(
@@ -45,6 +50,7 @@ void LargeImageSampleController::setSource(
     m_stopSource.request_stop();
     m_stopSource = std::stop_source();
     ++m_generation;
+    m_requestSerial = 0;
     m_latestRequest.reset();
     m_source = source;
 }
@@ -56,7 +62,8 @@ void LargeImageSampleController::requestSample(
         || !QRect(QPoint(), m_source->logicalSize()).contains(position)) {
         return;
     }
-    m_latestRequest = Request{position, picked, adjusted};
+    m_latestRequest = Request{
+        position, picked, adjusted, ++m_requestSerial};
     startLatestRequest();
 }
 

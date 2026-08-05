@@ -44,6 +44,8 @@ add_test(NAME clearveil_regression_layout
         floatingPanelsPersistAndSurviveLayoutLock)
 add_test(NAME clearveil_regression_input
     COMMAND clearveil_tests
+        inputContextPolicyReservesLocalShortcuts
+        largeImageSampleControllerDropsStaleResults
         mouseActionsEmitConfiguredCommands
         ocrTextSelectionPreservesReadingOrder
         ocrEngineRecognizesRenderedText

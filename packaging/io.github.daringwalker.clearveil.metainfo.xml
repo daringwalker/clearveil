@@ -37,6 +37,13 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.2.1-beta.2" date="2026-08-05" type="development">
+      <description>
+        <p>Prevents local color-picker, OCR selection, and folder-browser
+        shortcuts from triggering unrelated global image commands, and keeps
+        asynchronous large-image color samples in request order.</p>
+      </description>
+    </release>
     <release version="0.2.1-beta.1" date="2026-08-05" type="development">
       <description>
         <p>Aligns the application and package version across all distribution

@@ -1,4 +1,5 @@
 #include "browserwidget.h"
+#include "inputcontextpolicy.h"
 
 #include "foldernavigationcontroller.h"
 #include "thumbnailmodel.h"
@@ -28,6 +29,20 @@ QString directoryDisplayName(const QString &directoryPath)
     const QFileInfo directory(directoryPath);
     const QString name = directory.fileName();
     return name.isEmpty() ? directory.absoluteFilePath() : name;
+}
+
+bool claimFolderBrowserShortcut(QEvent *event)
+{
+    if (event->type() != QEvent::ShortcutOverride)
+        return false;
+    const auto &keyEvent = *static_cast<QKeyEvent *>(event);
+    if (!InputContextPolicy::claimsShortcut(
+            InputContextPolicy::Context::FolderBrowser,
+            keyEvent)) {
+        return false;
+    }
+    event->accept();
+    return true;
 }
 }
 
@@ -660,6 +675,13 @@ void BrowserWidget::refreshAppearance()
     m_refreshingAppearance = false;
 }
 
+bool BrowserWidget::event(QEvent *event)
+{
+    if (claimFolderBrowserShortcut(event))
+        return true;
+    return QWidget::event(event);
+}
+
 void BrowserWidget::changeEvent(QEvent *event)
 {
     QWidget::changeEvent(event);
@@ -702,6 +724,10 @@ void BrowserWidget::keyPressEvent(QKeyEvent *event)
 bool BrowserWidget::eventFilter(
     QObject *watched, QEvent *event)
 {
+    if (watched == m_view
+        && claimFolderBrowserShortcut(event)) {
+        return true;
+    }
     if (watched == m_view
         && event->type() == QEvent::KeyPress) {
         auto *keyEvent = static_cast<QKeyEvent *>(event);

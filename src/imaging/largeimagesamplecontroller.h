@@ -36,6 +36,7 @@ private:
         QPoint position;
         bool picked = false;
         bool adjusted = false;
+        quint64 serial = 0;
     };
     struct Result {
         Request request;
@@ -52,5 +53,6 @@ private:
     std::optional<Request> m_latestRequest;
     std::stop_source m_stopSource;
     quint64 m_generation = 0;
+    quint64 m_requestSerial = 0;
     bool m_busy = false;
 };

@@ -32,6 +32,8 @@
 #include "imageeditcontroller.h"
 #include "imageexportservice.h"
 #include "imageloadcontroller.h"
+#include "inputcontextpolicy.h"
+#include "largeimagesamplecontroller.h"
 #include "mainwindow.h"
 #include "metadatapanel.h"
 #include "ocrengine.h"
@@ -68,6 +70,7 @@
 #include <QFontMetrics>
 #include <QHeaderView>
 #include <QImage>
+#include <QKeyEvent>
 #include <QImageWriter>
 #include <QKeySequenceEdit>
 #include <QPlainTextEdit>
@@ -117,6 +120,7 @@ class CoreTest : public QObject
 
 private slots:
     void actionRegistryNormalizesLayouts();
+    void inputContextPolicyReservesLocalShortcuts();
     void applicationSettingsValidateAndRoundTrip();
     void folderNavigationTracksHistoryAndFavorites();
     void imageSessionSeparatesOpenedAndDirectoryPreview();
@@ -124,6 +128,7 @@ private slots:
     void imageLoaderKeepsLatestRequestAndReusesCache();
     void imageDecoderReportsMetricsAndCancellation();
     void largeImageDecoderUsesBoundedRegionSource();
+    void largeImageSampleControllerDropsStaleResults();
     void tiledImageRequestsCenterFirstAndDropsStaleQueue();
     void displayColorPipelineConvertsWithoutChangingSource();
     void displayColorControllerKeepsLatestImage();
@@ -254,6 +259,50 @@ void CoreTest::actionRegistryNormalizesLayouts()
     QCOMPARE(toolbarDefinitions.at(1).label,
              QStringLiteral("Separator"));
     QCOMPARE(registry.shortcutItemDefinitions().size(), 2);
+}
+
+void CoreTest::inputContextPolicyReservesLocalShortcuts()
+{
+    const QKeyEvent left(
+        QEvent::ShortcutOverride, Qt::Key_Left,
+        Qt::NoModifier);
+    const QKeyEvent escape(
+        QEvent::ShortcutOverride, Qt::Key_Escape,
+        Qt::NoModifier);
+    const QKeyEvent selectAll(
+        QEvent::ShortcutOverride, Qt::Key_A,
+        Qt::ControlModifier);
+    const QKeyEvent browserBack(
+        QEvent::ShortcutOverride, Qt::Key_Left,
+        Qt::AltModifier);
+    const QKeyEvent rename(
+        QEvent::ShortcutOverride, Qt::Key_F2,
+        Qt::NoModifier);
+
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::ColorPickerPinned,
+        left));
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::ColorPickerPinned,
+        escape));
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::OcrTextSelection,
+        selectAll));
+    QVERIFY(!InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::OcrTextSelection,
+        escape, false));
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::OcrTextSelection,
+        escape, true));
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::FolderBrowser,
+        browserBack));
+    QVERIFY(InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::FolderBrowser,
+        rename));
+    QVERIFY(!InputContextPolicy::claimsShortcut(
+        InputContextPolicy::Context::FolderBrowser,
+        left));
 }
 
 void CoreTest::applicationSettingsValidateAndRoundTrip()
@@ -909,6 +958,75 @@ void CoreTest::largeImageDecoderUsesBoundedRegionSource()
     QVERIFY2(exported.succeeded(), qPrintable(exported.detail));
     QImageReader exportedReader(exportedPath);
     QCOMPARE(exportedReader.size(), source.size());
+}
+
+void CoreTest::largeImageSampleControllerDropsStaleResults()
+{
+    class DelayedSampleSource final : public ImageSource
+    {
+    public:
+        QSize logicalSize() const override { return {256, 256}; }
+        QImage preview() const override
+        {
+            QImage image(32, 32, QImage::Format_RGB32);
+            image.fill(Qt::black);
+            return image;
+        }
+        QString filePath() const override
+        {
+            return QStringLiteral("delayed-sample-source");
+        }
+        bool isRegionBacked() const override { return true; }
+        QImage readRegion(
+            const QRect &sourceRect, const QSize &outputSize,
+            std::stop_token, QString *) override
+        {
+            if (++m_requestCount == 1) {
+                m_firstRequestStarted = true;
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(80));
+            }
+            QImage image(outputSize, QImage::Format_RGB32);
+            image.fill(QColor(
+                sourceRect.center().x(),
+                sourceRect.center().y(), 90));
+            return image;
+        }
+
+        std::atomic_bool m_firstRequestStarted{false};
+
+    private:
+        std::atomic_int m_requestCount{0};
+    };
+
+    const auto source = std::make_shared<DelayedSampleSource>();
+    LargeImageSampleController controller;
+    controller.setSource(source);
+    QSignalSpy ready(
+        &controller, &LargeImageSampleController::sampleReady);
+
+    controller.requestSample(QPoint(20, 20), false, true);
+    QTRY_VERIFY_WITH_TIMEOUT(
+        source->m_firstRequestStarted.load(), 1000);
+    controller.requestSample(QPoint(40, 40), false, true);
+    QTRY_COMPARE_WITH_TIMEOUT(ready.count(), 1, 2000);
+    QCOMPARE(ready.constFirst().at(1).toPoint(), QPoint(40, 40));
+    QTest::qWait(120);
+    QCOMPARE(ready.count(), 1);
+
+    const auto pickedSource =
+        std::make_shared<DelayedSampleSource>();
+    controller.setSource(pickedSource);
+    ready.clear();
+    controller.requestSample(QPoint(60, 60), true, false);
+    QTRY_VERIFY_WITH_TIMEOUT(
+        pickedSource->m_firstRequestStarted.load(), 1000);
+    controller.requestSample(QPoint(61, 60), false, true);
+    QTRY_COMPARE_WITH_TIMEOUT(ready.count(), 2, 2000);
+    QCOMPARE(ready.at(0).at(1).toPoint(), QPoint(60, 60));
+    QCOMPARE(ready.at(0).at(3).toBool(), true);
+    QCOMPARE(ready.at(1).at(1).toPoint(), QPoint(61, 60));
+    QCOMPARE(ready.at(1).at(4).toBool(), true);
 }
 
 void CoreTest::tiledImageRequestsCenterFirstAndDropsStaleQueue()
@@ -2887,11 +3005,16 @@ void CoreTest::colorPickerOffersCopyableFormats()
     const QString path =
         directory.filePath(QStringLiteral("picker.png"));
     QVERIFY(image.save(path));
+    const QString nextPath =
+        directory.filePath(QStringLiteral("picker-next.png"));
+    QVERIFY(image.save(nextPath));
 
     MainWindow window;
     window.resize(920, 620);
     window.show();
-    QVERIFY(window.openPath(path));
+    QVERIFY(window.openPaths({path, nextPath}));
+    QTRY_VERIFY(window.windowTitle().contains(
+        QStringLiteral("picker.png")));
     auto *canvas = window.findChild<ImageCanvas *>();
     auto *pickerAction = window.findChild<QAction *>(
         QStringLiteral("colorPickerAction"));
@@ -2921,6 +3044,14 @@ void CoreTest::colorPickerOffersCopyableFormats()
         QStringLiteral("pickedColorPositionY"));
     auto *axisLegend = window.findChild<QWidget *>(
         QStringLiteral("coordinateAxisLegend"));
+    QAction *nextAction = nullptr;
+    for (QAction *action : window.findChildren<QAction *>()) {
+        if (action->shortcut()
+            == QKeySequence(Qt::Key_Right)) {
+            nextAction = action;
+            break;
+        }
+    }
     QVERIFY(canvas);
     QVERIFY(pickerAction);
     QVERIFY(pickerDock);
@@ -2936,6 +3067,7 @@ void CoreTest::colorPickerOffersCopyableFormats()
     QVERIFY(positionX);
     QVERIFY(positionY);
     QVERIFY(axisLegend);
+    QVERIFY(nextAction);
 
     pickerAction->setChecked(true);
     QVERIFY(pickerAction->isChecked());
@@ -2996,6 +3128,8 @@ void CoreTest::colorPickerOffersCopyableFormats()
         canvas, &ImageCanvas::colorSampleAdjusted);
     QTest::keyClick(canvas, Qt::Key_Right);
     QTRY_COMPARE(adjusted.size(), 1);
+    QVERIFY(window.windowTitle().contains(
+        QStringLiteral("picker.png")));
     QCOMPARE(
         adjusted.constLast().at(1).toPoint(),
         pinnedPosition + QPoint(1, 0));
@@ -3016,9 +3150,13 @@ void CoreTest::colorPickerOffersCopyableFormats()
     QCOMPARE(hovered.size(), samplesAfterPin);
     QCOMPARE(hexField->text(), pinnedHex);
 
-    QTest::keyClick(&window, Qt::Key_Escape);
+    nextAction->setShortcut(QKeySequence(Qt::Key_Escape));
+    QTest::keyClick(canvas, Qt::Key_Escape);
     QVERIFY(!canvas->isColorSamplePinned());
     QVERIFY(!resumeButton->isEnabled());
+    QVERIFY(window.windowTitle().contains(
+        QStringLiteral("picker.png")));
+    nextAction->setShortcut(QKeySequence(Qt::Key_Right));
     const QPoint resumedPoint =
         firstPoint + QPoint(20, 0);
     QTest::mouseMove(canvas, resumedPoint, 5);
@@ -3420,10 +3558,17 @@ void CoreTest::browserRestoresPerDirectoryState()
     historyBack->click();
     QTRY_COMPARE_WITH_TIMEOUT(view->model()->rowCount(), 4, 3000);
     QVERIFY(historyForward->isEnabled());
+    QAction browserShortcutHijack(&browser);
+    browserShortcutHijack.setShortcut(
+        QKeySequence(QStringLiteral("Alt+Right")));
+    browser.addAction(&browserShortcutHijack);
+    QSignalSpy browserShortcutSpy(
+        &browserShortcutHijack, &QAction::triggered);
     view->setFocus();
     QTest::keyClick(
         view, Qt::Key_Right, Qt::AltModifier);
     QTRY_COMPARE_WITH_TIMEOUT(view->model()->rowCount(), 80, 3000);
+    QCOMPARE(browserShortcutSpy.count(), 0);
     QVERIFY(browser.recentDirectories().contains(firstDirectory));
     QVERIFY(browser.recentDirectories().contains(secondDirectory));
 
@@ -4594,6 +4739,19 @@ void CoreTest::ocrCanvasSupportsMouseSelection()
     QCOMPARE(canvas.selectedText(), QStringLiteral("AB"));
     QCOMPARE(canvas.viewOffset(), QPointF());
 
+    QTest::keyClick(&canvas, Qt::Key_Escape);
+    QVERIFY(!canvas.hasSelectedText());
+
+    QAction selectAllHijack(&canvas);
+    selectAllHijack.setShortcut(QKeySequence::SelectAll);
+    canvas.addAction(&selectAllHijack);
+    QSignalSpy selectAllHijackSpy(
+        &selectAllHijack, &QAction::triggered);
+    QTest::keyClick(
+        &canvas, Qt::Key_A, Qt::ControlModifier);
+    QVERIFY(canvas.hasSelectedText());
+    QCOMPARE(canvas.selectedText(), QStringLiteral("AB"));
+    QCOMPARE(selectAllHijackSpy.count(), 0);
     QTest::keyClick(&canvas, Qt::Key_Escape);
     QVERIFY(!canvas.hasSelectedText());
 

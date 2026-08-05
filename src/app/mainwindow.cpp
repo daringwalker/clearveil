@@ -694,14 +694,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape
-        && m_colorPickerController
-        && m_colorPickerController->isEnabled()
-        && m_colorPickerController->isSamplePinned()) {
-        m_colorPickerController->resumeSampling();
-        event->accept();
-        return;
-    }
     if (event->key() == Qt::Key_Escape && isFullScreen()) {
         toggleFullscreen();
         event->accept();

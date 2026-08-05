@@ -1,4 +1,5 @@
 #include "imagecanvas.h"
+#include "inputcontextpolicy.h"
 #include "largeimagesamplecontroller.h"
 #include "ocrtextselectionmodel.h"
 #include "tiledimageviewmodel.h"
@@ -58,6 +59,25 @@ ImageCanvas::ImageCanvas(QWidget *parent)
 
 bool ImageCanvas::event(QEvent *event)
 {
+    if (event->type() == QEvent::ShortcutOverride) {
+        const auto &keyEvent =
+            *static_cast<QKeyEvent *>(event);
+        const bool colorPickerClaimsShortcut =
+            m_colorPickerEnabled && m_colorSamplePinned
+            && InputContextPolicy::claimsShortcut(
+                InputContextPolicy::Context::ColorPickerPinned,
+                keyEvent);
+        const bool ocrClaimsShortcut =
+            m_ocrTextSelectionEnabled
+            && InputContextPolicy::claimsShortcut(
+                InputContextPolicy::Context::OcrTextSelection,
+                keyEvent,
+                m_ocrTextSelectionModel->hasSelection());
+        if (colorPickerClaimsShortcut || ocrClaimsShortcut) {
+            event->accept();
+            return true;
+        }
+    }
     if (event->type() == QEvent::NativeGesture
         && handleNativeGesture(
             static_cast<QNativeGestureEvent *>(event))) {
@@ -867,6 +887,12 @@ void ImageCanvas::mouseDoubleClickEvent(QMouseEvent *event)
 
 void ImageCanvas::keyPressEvent(QKeyEvent *event)
 {
+    if (m_colorPickerEnabled && m_colorSamplePinned
+        && event->key() == Qt::Key_Escape) {
+        setColorSamplePinned(false);
+        event->accept();
+        return;
+    }
     if (m_ocrTextSelectionEnabled
         && event->matches(QKeySequence::SelectAll)) {
         m_ocrTextSelectionModel->selectAll();

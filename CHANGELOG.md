@@ -5,6 +5,14 @@
 
 ## [Unreleased]
 
+## [0.2.1-beta.2] - 2026-08-05
+
+### Fixed
+
+- 修复取色点固定后使用方向键微调时同时切换上一张或下一张图片的问题。
+- 修复 OCR 文字选择和文件夹浏览快捷键被全局图片操作抢占的问题。
+- 修复超大图片异步取色时旧请求结果覆盖最新悬浮取色结果的问题，同时保留已确认取色点。
+
 ## [0.2.1-beta.1] - 2026-08-05
 
 ### Changed
@@ -53,7 +61,8 @@
 
 - 首个开发预览版，包含基本查看、目录浏览、轻量编辑和中英文界面。
 
-[Unreleased]: https://github.com/daringwalker/clearveil/compare/v0.2.1-beta.1...HEAD
+[Unreleased]: https://github.com/daringwalker/clearveil/compare/v0.2.1-beta.2...HEAD
+[0.2.1-beta.2]: https://github.com/daringwalker/clearveil/compare/v0.2.1-beta.1...v0.2.1-beta.2
 [0.2.1-beta.1]: https://github.com/daringwalker/clearveil/compare/v0.2.0-beta.2...v0.2.1-beta.1
 [0.2.0-beta.2]: https://github.com/daringwalker/clearveil/compare/v0.2.0-beta.1...v0.2.0-beta.2
 [0.2.0-beta.1]: https://github.com/daringwalker/clearveil/releases/tag/v0.2.0-beta.1
