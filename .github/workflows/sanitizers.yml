@@ -20,13 +20,17 @@ jobs:
       - name: Install build dependencies
         run: >-
           pacman -Syu --noconfirm
-          clang cmake ninja pkgconf
+          git clang cmake ninja pkgconf
           qt6-base qt6-svg qt6-tools
           exiv2 libcolord libvips
-          tesseract tesseract-data-eng
+          tesseract tesseract-data-eng tesseract-data-chi_sim
+          ttf-dejavu
 
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Trust the container checkout
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
 
       - name: Configure
         env:
