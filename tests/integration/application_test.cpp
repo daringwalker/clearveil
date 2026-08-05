@@ -4939,6 +4939,8 @@ void CoreTest::fullscreenComponentsHideAndRestore()
         QStringLiteral("cornerMenuButton"));
     auto *fullscreen = window.findChild<QAction *>(
         QStringLiteral("fullscreenAction"));
+    auto *filmstripVisibility = window.findChild<QAction *>(
+        QStringLiteral("filmstripAction"));
     auto *showToolbar = window.findChild<QAction *>(
         QStringLiteral("fullscreenToolbarAction"));
     auto *showFilmstrip = window.findChild<QAction *>(
@@ -4952,12 +4954,15 @@ void CoreTest::fullscreenComponentsHideAndRestore()
     QVERIFY(information);
     QVERIFY(cornerMenu);
     QVERIFY(fullscreen);
+    QVERIFY(filmstripVisibility);
     QVERIFY(showToolbar);
     QVERIFY(showFilmstrip);
     QVERIFY(showStatus);
     QVERIFY(showInformation);
 
     information->show();
+    filmstripVisibility->setChecked(true);
+    filmstrip->show();
     showToolbar->setChecked(false);
     showFilmstrip->setChecked(false);
     showStatus->setChecked(false);
