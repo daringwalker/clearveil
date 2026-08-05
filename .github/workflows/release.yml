@@ -69,7 +69,7 @@ jobs:
             release-artifacts/PKGBUILD
 
       - name: Upload source inputs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-source-${{ github.ref_name }}
           path: |
@@ -112,7 +112,7 @@ jobs:
           test -n "$(find . -maxdepth 1 -name '*.pkg.tar.zst' -print -quit)"
 
       - name: Upload Arch Linux package
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-arch-${{ github.ref_name }}
           path: release-input/*.pkg.tar.zst
@@ -168,7 +168,7 @@ jobs:
           mv -- "${package}" "${target}"
 
       - name: Upload Ubuntu package
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-deb-ubuntu24-${{ github.ref_name }}
           path: release-artifacts/*.deb
@@ -230,7 +230,7 @@ jobs:
           mv -- "${package}" "${target}"
 
       - name: Upload Debian package
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-deb-debian13-${{ github.ref_name }}
           path: release-artifacts/*.deb
@@ -274,7 +274,7 @@ jobs:
           fi
 
       - name: Upload RPM package
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-rpm-${{ github.ref_name }}
           path: release-artifacts/*.rpm
@@ -337,7 +337,7 @@ jobs:
             "$(<VERSION)"
 
       - name: Upload AppImage
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: clearveil-appimage-${{ github.ref_name }}
           path: release-artifacts/*.AppImage
