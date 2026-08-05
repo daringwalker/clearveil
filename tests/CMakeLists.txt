@@ -95,3 +95,10 @@ if(FLATPAK_BUILDER_EXECUTABLE)
     set_tests_properties(clearveil_packaging_flatpak_manifest
         PROPERTIES LABELS "packaging")
 endif()
+
+add_test(NAME clearveil_packaging_release_metadata
+    COMMAND bash "${PROJECT_SOURCE_DIR}/tools/check_release_metadata.sh")
+set_tests_properties(clearveil_packaging_release_metadata
+    PROPERTIES
+        LABELS "packaging"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")

@@ -8,30 +8,40 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 defaults:
   run:
     shell: bash
 
 jobs:
   source:
+    name: Source archive
     runs-on: ubuntu-latest
     container: archlinux:base-devel
     steps:
       - name: Install release dependencies
         run: >-
           pacman -Syu --noconfirm
-          cmake ninja pkgconf github-cli
+          git cmake ninja pkgconf
           qt6-base qt6-svg qt6-tools
           exiv2 libcolord libvips
           tesseract tesseract-data-eng tesseract-data-chi_sim
+          ttf-dejavu
 
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
-      - name: Verify tag matches project version
+      - name: Trust the container checkout
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
+      - name: Verify tag and repository metadata
         run: |
           bash tools/check_release_version.sh "${GITHUB_REF_NAME}"
           bash tools/check_release_metadata.sh
+          bash tools/check_repository_hygiene.sh
 
       - name: Build and test
         run: |
@@ -42,8 +52,9 @@ jobs:
           cmake --build build-release
           ctest --test-dir build-release --output-on-failure
 
-      - name: Build source archive
+      - name: Build source archive and release PKGBUILD
         run: |
+          mkdir -p release-artifacts
           cpack --config build-release/CPackSourceConfig.cmake \
             -G TGZ -B release-artifacts
           bash tools/check_source_archive.sh \
@@ -51,22 +62,225 @@ jobs:
           archive="$(find release-artifacts -maxdepth 1 \
             -name 'clearveil-*-Source.tar.gz' -print -quit)"
           checksum="$(sha256sum "${archive}" | cut -d ' ' -f 1)"
-          (cd release-artifacts && sha256sum clearveil-*-Source.tar.gz > SHA256SUMS)
           cp packaging/PKGBUILD release-artifacts/PKGBUILD
           sed -i "s/sha256sums=('SKIP')/sha256sums=('${checksum}')/" \
             release-artifacts/PKGBUILD
-          grep -F "sha256sums=('${checksum}')" release-artifacts/PKGBUILD
+          grep -F "sha256sums=('${checksum}')" \
+            release-artifacts/PKGBUILD
 
-      - name: Upload workflow artifact
+      - name: Upload source inputs
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: clearveil-source-${{ github.ref_name }}
           path: |
             release-artifacts/clearveil-*-Source.tar.gz
-            release-artifacts/SHA256SUMS
             release-artifacts/PKGBUILD
+          if-no-files-found: error
 
-      - name: Create GitHub release
+  arch:
+    name: Arch Linux package
+    needs: source
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install package dependencies
+        run: >-
+          pacman -Syu --noconfirm
+          cmake ninja pkgconf
+          qt6-base qt6-svg qt6-tools
+          exiv2 libcolord libvips
+          tesseract tesseract-data-eng tesseract-data-chi_sim
+
+      - name: Download source inputs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: clearveil-source-${{ github.ref_name }}
+          path: release-input
+
+      - name: Build package with makepkg
+        working-directory: release-input
+        run: |
+          archive="$(find . -maxdepth 1 \
+            -name 'clearveil-*-Source.tar.gz' -printf '%f\n' -quit)"
+          test -n "${archive}"
+          sed -i "s|^source=.*|source=('${archive}')|" PKGBUILD
+          useradd --create-home package-builder
+          chown -R package-builder:package-builder .
+          runuser -u package-builder -- \
+            makepkg --noconfirm --cleanbuild --clean
+          test -n "$(find . -maxdepth 1 -name '*.pkg.tar.zst' -print -quit)"
+
+      - name: Upload Arch Linux package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-arch-${{ github.ref_name }}
+          path: release-input/*.pkg.tar.zst
+          if-no-files-found: error
+
+  deb:
+    name: Debian package
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+            build-essential cmake ninja-build pkg-config dpkg-dev file \
+            qt6-base-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools \
+            libexiv2-dev libcolord-dev libvips-dev \
+            libtesseract-dev tesseract-ocr-eng tesseract-ocr-chi-sim
+
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Build Debian package
+        run: |
+          cmake -S . -B build-deb -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=OFF
+          cmake --build build-deb
+          cpack --config build-deb/CPackConfig.cmake \
+            -G DEB -B release-artifacts
+          package="$(find release-artifacts -maxdepth 1 \
+            -name '*.deb' -print -quit)"
+          test -n "${package}"
+          dpkg-deb --info "${package}"
+
+      - name: Upload Debian package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-deb-${{ github.ref_name }}
+          path: release-artifacts/*.deb
+          if-no-files-found: error
+
+  rpm:
+    name: RPM package
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - name: Install build dependencies
+        run: >-
+          dnf install -y
+          git gcc-c++ cmake ninja-build pkgconf-pkg-config rpm-build file
+          qt6-qtbase-devel qt6-qtsvg-devel qt6-qttools-devel
+          exiv2-devel colord-devel vips-devel
+          tesseract-devel tesseract-langpack-eng tesseract-langpack-chi_sim
+
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Trust the container checkout
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
+      - name: Build RPM package
+        run: |
+          cmake -S . -B build-rpm -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=OFF
+          cmake --build build-rpm
+          cpack --config build-rpm/CPackConfig.cmake \
+            -G RPM -B release-artifacts
+          package="$(find release-artifacts -maxdepth 1 \
+            -name '*.rpm' -print -quit)"
+          test -n "${package}"
+          rpm -qip "${package}"
+
+      - name: Upload RPM package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-rpm-${{ github.ref_name }}
+          path: release-artifacts/*.rpm
+          if-no-files-found: error
+
+  appimage:
+    name: AppImage
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential pkg-config python3-venv curl file patchelf \
+            libgl1-mesa-dev libxkbcommon-x11-0 \
+            libexiv2-dev libcolord-dev libvips-dev libtesseract-dev
+
+      - name: Install CMake, Ninja, and Qt
+        run: |
+          python3 -m venv /tmp/clearveil-build-tools
+          /tmp/clearveil-build-tools/bin/pip install \
+            cmake==4.4.2 ninja aqtinstall
+          /tmp/clearveil-build-tools/bin/aqt install-qt \
+            linux desktop 6.8.3 linux_gcc_64 \
+            -O /tmp/Qt --modules qtsvg qttools qtimageformats qtwayland
+          echo "/tmp/clearveil-build-tools/bin" >> "${GITHUB_PATH}"
+          echo "/tmp/Qt/6.8.3/gcc_64/bin" >> "${GITHUB_PATH}"
+          echo "/tmp/clearveil-appimage-tools" >> "${GITHUB_PATH}"
+
+      - name: Download AppImage deployment tools
+        run: |
+          mkdir -p /tmp/clearveil-appimage-tools
+          curl --fail --location --retry 3 \
+            -o /tmp/clearveil-appimage-tools/linuxdeploy-x86_64.AppImage \
+            https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          curl --fail --location --retry 3 \
+            -o /tmp/clearveil-appimage-tools/linuxdeploy-plugin-qt-x86_64.AppImage \
+            https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod 755 /tmp/clearveil-appimage-tools/*.AppImage
+
+      - name: Build AppImage
+        env:
+          CMAKE_PREFIX_PATH: /tmp/Qt/6.8.3/gcc_64
+          LD_LIBRARY_PATH: /tmp/Qt/6.8.3/gcc_64/lib
+          QMAKE: /tmp/Qt/6.8.3/gcc_64/bin/qmake
+          LINUXDEPLOY: /tmp/clearveil-appimage-tools/linuxdeploy-x86_64.AppImage
+        run: |
+          bash packaging/appimage/build.sh \
+            "${GITHUB_WORKSPACE}" \
+            "${GITHUB_WORKSPACE}/build-appimage" \
+            "${GITHUB_WORKSPACE}/Clearveil.AppDir" \
+            "${GITHUB_WORKSPACE}/release-artifacts" \
+            "$(<VERSION)"
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-appimage-${{ github.ref_name }}
+          path: release-artifacts/*.AppImage
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    needs: [source, arch, deb, rpm, appimage]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: clearveil-*-${{ github.ref_name }}
+          path: release-artifacts
+          merge-multiple: true
+
+      - name: Create and verify checksums
+        run: |
+          (
+            cd release-artifacts
+            find . -maxdepth 1 -type f ! -name SHA256SUMS \
+              -printf '%f\0' \
+              | sort -z \
+              | xargs -0 sha256sum > SHA256SUMS
+          )
+          bash tools/check_release_artifacts.sh \
+            release-artifacts "$(<VERSION)"
+
+      - name: Create or update GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -74,8 +288,10 @@ jobs:
           if [[ "${GITHUB_REF_NAME}" == *-* ]]; then
             release_flags+=(--prerelease)
           fi
-          gh release create "${GITHUB_REF_NAME}" \
-            release-artifacts/clearveil-*-Source.tar.gz \
-            release-artifacts/SHA256SUMS \
-            release-artifacts/PKGBUILD \
-            "${release_flags[@]}"
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" \
+              release-artifacts/* --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              release-artifacts/* "${release_flags[@]}"
+          fi

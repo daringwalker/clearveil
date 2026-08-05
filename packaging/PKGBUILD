@@ -1,11 +1,12 @@
 # Maintainer: daringwalker
 pkgname=clearveil
-pkgver=0.2.0.beta.1
+pkgver=0.2.0beta.1
 pkgrel=1
-pkgdesc='Fast, friendly image viewer for Linux (Clearveil·云开见月明)'
+pkgdesc='Fast, friendly image viewer for Linux (云开见月明)'
 arch=(x86_64 aarch64)
 url='https://github.com/daringwalker/clearveil'
 license=(GPL-3.0-or-later)
+options=(!debug)
 depends=(qt6-base qt6-svg exiv2 libcolord libvips tesseract tesseract-data-eng)
 makedepends=(cmake ninja qt6-tools)
 optdepends=(

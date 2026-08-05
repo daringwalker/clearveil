@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
                                                    Qt::CaseInsensitive));
     QApplication::setApplicationDisplayName(
         useChinese
-            ? QStringLiteral("Clearveil·云开见月明")
+            ? QStringLiteral("云开见月明")
             : QStringLiteral("Clearveil"));
     QTranslator qtTranslator;
     QTranslator clearveilTranslator;

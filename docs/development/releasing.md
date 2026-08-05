@@ -41,13 +41,15 @@ git tag -s v0.2.0-beta.1 -m "Clearveil 0.2.0 beta 1"
 git push origin main v0.2.0-beta.1
 ```
 
-工作流会重新构建和测试，上传源码包、`SHA256SUMS`，并生成一个写入真实源码包
-校验和的 `PKGBUILD` 发布附件。预发布标签会自动创建为 GitHub prerelease。
+工作流会重新构建和测试，默认生成 Arch Linux、DEB、RPM、AppImage、源码包和写入
+真实源码包校验和的 `PKGBUILD`。全部任务完成后才会生成覆盖所有附件的
+`SHA256SUMS` 并创建 GitHub Release；预发布标签会自动创建为 GitHub prerelease。
 
 ## 发布后
 
-- 下载源码包并验证 SHA-256；
-- 使用发布附件中的 `PKGBUILD` 在干净 Arch 环境构建、安装和卸载；
+- 下载所有发布附件并使用 `SHA256SUMS` 验证；
+- 分别在干净 Arch、Ubuntu、Fedora 环境安装和卸载对应原生包；
+- 在不安装 Clearveil 运行依赖的兼容系统上验证 AppImage 启动、X11/Wayland 与打开图片；
 - 将最终校验和同步回仓库中的 `packaging/PKGBUILD`；
 - 检查 GitHub Release、CI、CodeQL 和 Dependabot 状态；
 - 稳定版发布前补充 README 与 AppStream 的当前界面截图；

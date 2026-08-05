@@ -21,6 +21,27 @@ cpack --config build-release/CPackSourceConfig.cmake -G TGZ
 
 GitHub 自动生成的 tag archive 也可以作为 Arch 包源，但必须记录固定校验和。
 
+## GitHub Release 二进制包
+
+推送与 `VERSION` 一致的 `v*` 标签后，Release 工作流默认并行生成以下 x86_64 产物：
+
+- Arch Linux：由 `makepkg` 在官方 Arch 容器中生成 `.pkg.tar.zst`；
+- Debian/Ubuntu：由 CPack 在 Ubuntu 26.04 中生成 `.deb`，依赖由
+  `dpkg-shlibdeps` 从实际链接库计算；
+- Fedora/RHEL 系：由 CPack/rpmbuild 在 Fedora 44 中生成 `.rpm`；
+- 通用包：在 Ubuntu 22.04 基线上使用 Qt 6.8 LTS 和 linuxdeploy 生成
+  `.AppImage`，同时打包 Qt 的 X11 与 Wayland 平台插件。
+
+工作流只有在四种二进制包、源码包和发布用 PKGBUILD 全部存在时才会发布，并为全部
+产物重新生成统一的 `SHA256SUMS`。DEB/RPM/Arch 包使用发行版依赖；AppImage 打包核心
+运行库，但额外图片编解码插件和 OCR 语言模型仍可由系统提供。
+
+本地验证已汇总的产物：
+
+```bash
+bash tools/check_release_artifacts.sh release-artifacts "$(<VERSION)"
+```
+
 ## Flatpak
 
 Flatpak 依赖必须固定版本和提交。提交 Flathub 前应重新评估文件系统权限，并在真实

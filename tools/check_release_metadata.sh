@@ -3,7 +3,10 @@ set -euo pipefail
 
 readonly version=$(tr -d '[:space:]' < VERSION)
 readonly tag="v${version}"
-readonly pkgver=${version//-/.}
+# Arch compares a dotted prerelease (0.2.0.beta.1) as newer than 0.2.0.
+# Removing the first separator produces 0.2.0beta.1, which correctly sorts
+# before the eventual stable version while retaining the prerelease number.
+readonly pkgver=${version//-/}
 
 check_contains() {
     local file=$1

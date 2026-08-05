@@ -5,7 +5,7 @@
     <message>
       <location filename="../src/ui/dialogs/aboutdialog.cpp" line="22" />
       <source>About Clearveil</source>
-      <translation>关于 Clearveil·云开见月明</translation>
+      <translation>关于 云开见月明</translation>
     </message>
     <message>
       <location filename="../src/ui/dialogs/aboutdialog.cpp" line="40" />
@@ -15,7 +15,7 @@
     <message>
       <location filename="../src/ui/dialogs/aboutdialog.cpp" line="45" />
       <source>Clearveil</source>
-      <translation>Clearveil·云开见月明</translation>
+      <translation>云开见月明</translation>
     </message>
     <message>
       <location filename="../src/ui/dialogs/aboutdialog.cpp" line="56" />
@@ -1304,7 +1304,7 @@ Command: %3</source>
       <location filename="../src/app/mainwindow.cpp" line="179" />
       <location filename="../src/app/mainwindow.cpp" line="223" />
       <source>Clearveil</source>
-      <translation>Clearveil·云开见月明</translation>
+      <translation>云开见月明</translation>
     </message>
     <message>
       <location filename="../src/app/mainwindow.cpp" line="403" />
@@ -2130,7 +2130,7 @@ Command: %3</source>
     <message>
       <location filename="../src/app/mainwindow.cpp" line="224" />
       <source>%1 — Clearveil</source>
-      <translation>%1 — Clearveil·云开见月明</translation>
+      <translation>%1 — 云开见月明</translation>
     </message>
     <message>
       <location filename="../src/app/mainwindow.cpp" line="3939" />
@@ -2190,7 +2190,7 @@ Command: %3</source>
     <message>
       <location filename="../src/app/mainwindow.cpp" line="227" />
       <source>%1%2 — Clearveil</source>
-      <translation>%1%2 — Clearveil·云开见月明</translation>
+      <translation>%1%2 — 云开见月明</translation>
     </message>
     <message>
       <location filename="../src/app/mainwindow.cpp" line="1658" />

@@ -1,4 +1,4 @@
-# Clearveil / Clearveil·云开见月明
+# Clearveil / 云开见月明
 
 [![CI](https://github.com/daringwalker/clearveil/actions/workflows/ci.yml/badge.svg)](https://github.com/daringwalker/clearveil/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/daringwalker/clearveil/actions/workflows/codeql.yml/badge.svg)](https://github.com/daringwalker/clearveil/actions/workflows/codeql.yml)
@@ -7,7 +7,7 @@
 [English](README.en.md) · [用户文档](docs/README.md) ·
 [开发路线](docs/roadmap.md) · [参与贡献](CONTRIBUTING.md)
 
-Clearveil（中文显示名：Clearveil·云开见月明）是一款面向 Linux 桌面的开源图片查看器。它强调单窗口、画布优先
+Clearveil（中文显示名：云开见月明）是一款面向 Linux 桌面的开源图片查看器。它强调单窗口、画布优先
 和直接的浏览体验：多次打开图片会复用同一进程，并维护用户明确打开的图片列表；
 需要时也可以切换到当前文件夹浏览。
 
@@ -73,7 +73,7 @@ ctest --test-dir build --output-on-failure
 [格式支持](docs/user/supported-formats.md)。
 
 首个公开版本采用 `v0.2.0-beta.1` 预发布标签。GitHub Release 提供经过 CI 验证的源码包、
-SHA-256 和带真实校验和的 PKGBUILD；完整发布步骤见
+Arch Linux 包、DEB、RPM、AppImage、SHA-256 和带真实校验和的 PKGBUILD；完整发布步骤见
 [GitHub 发布流程](docs/development/releasing.md)。
 
 性能基准默认不参与普通构建，需要时显式启用：
@@ -104,7 +104,7 @@ cmake --build build-bench
 ## 名称与许可
 
 - 产品英文名：Clearveil
-- 中文显示名：Clearveil·云开见月明
+- 中文显示名：云开见月明
 - 仓库、可执行文件和包名：`clearveil`
 
 源代码以 [GPL-3.0-or-later](LICENSE) 发布，版权约定见

@@ -4,7 +4,7 @@
 [Desktop Entry]
 Type=Application
 Name=Clearveil
-Name[zh_CN]=Clearveil·云开见月明
+Name[zh_CN]=云开见月明
 Comment=View and browse images
 Comment[zh_CN]=查看和浏览图片
 Exec=clearveil %U

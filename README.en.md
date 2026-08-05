@@ -7,7 +7,7 @@
 [简体中文](README.md) · [Documentation](docs/README.md) ·
 [Roadmap](docs/roadmap.md) · [Contributing](CONTRIBUTING.md)
 
-Clearveil (Chinese display name: Clearveil·云开见月明) is an open-source image viewer for the
+Clearveil (Chinese display name: 云开见月明) is an open-source image viewer for the
 Linux desktop. It focuses on a canvas-first, single-window browsing experience.
 Opening more files reuses the existing process and preserves the list of files
 the user explicitly opened, while folder browsing remains one click away.
@@ -83,8 +83,9 @@ See the [build guide](docs/development/building.md), the
 [contribution guide](CONTRIBUTING.md) for more information.
 
 The first public version uses the `v0.2.0-beta.1` prerelease tag. GitHub Release
-provides a CI-verified source archive, SHA-256 checksums, and a PKGBUILD carrying
-the archive's actual checksum. See the
+provides CI-built Arch Linux, DEB, RPM, and AppImage packages alongside the
+source archive, SHA-256 checksums, and a PKGBUILD carrying the archive's actual
+checksum. See the
 [release procedure](docs/development/releasing.md) for the complete process.
 
 Clearveil is licensed under [GPL-3.0-or-later](LICENSE). See
