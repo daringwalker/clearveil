@@ -37,6 +37,12 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.2.1-beta.1" date="2026-08-05" type="development">
+      <description>
+        <p>Aligns the application and package version across all distribution
+        formats while retaining the tested 0.2 beta feature set.</p>
+      </description>
+    </release>
     <release version="0.2.0-beta.2" date="2026-08-05" type="development">
       <description>
         <p>Adds native Ubuntu 24.04 and Debian 13 packages with OCR verification,

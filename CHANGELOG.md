@@ -5,6 +5,13 @@
 
 ## [Unreleased]
 
+## [0.2.1-beta.1] - 2026-08-05
+
+### Changed
+
+- 提升预发布版本号，使 GitHub、Arch、DEB、RPM、AppImage 和应用内版本采用统一的
+  `0.2.1-beta.1` 版本策略。
+
 ## [0.2.0-beta.2] - 2026-08-05
 
 ### Added
@@ -46,7 +53,8 @@
 
 - 首个开发预览版，包含基本查看、目录浏览、轻量编辑和中英文界面。
 
-[Unreleased]: https://github.com/daringwalker/clearveil/compare/v0.2.0-beta.2...HEAD
+[Unreleased]: https://github.com/daringwalker/clearveil/compare/v0.2.1-beta.1...HEAD
+[0.2.1-beta.1]: https://github.com/daringwalker/clearveil/compare/v0.2.0-beta.2...v0.2.1-beta.1
 [0.2.0-beta.2]: https://github.com/daringwalker/clearveil/compare/v0.2.0-beta.1...v0.2.0-beta.2
 [0.2.0-beta.1]: https://github.com/daringwalker/clearveil/releases/tag/v0.2.0-beta.1
 [0.1.0]: https://github.com/daringwalker/clearveil/releases/tag/v0.1.0

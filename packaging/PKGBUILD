@@ -1,6 +1,6 @@
 # Maintainer: daringwalker
 pkgname=clearveil
-pkgver=0.2.0beta.2
+pkgver=0.2.1beta.1
 pkgrel=1
 pkgdesc='Fast, friendly image viewer for Linux (云开见月明)'
 arch=(x86_64 aarch64)
@@ -16,7 +16,7 @@ optdepends=(
   'tesseract-data-chi_sim: recognize Simplified Chinese text in images'
   'tesseract-data-chi_tra: recognize Traditional Chinese text in images'
 )
-_release_version=0.2.0-beta.2
+_release_version=0.2.1-beta.1
 _source_dir="${pkgname}-${_release_version}-Source"
 source=("${pkgname}-${pkgver}.tar.gz::${url}/releases/download/v${_release_version}/${_source_dir}.tar.gz")
 sha256sums=('SKIP') # Updated to the release archive checksum before publishing.
