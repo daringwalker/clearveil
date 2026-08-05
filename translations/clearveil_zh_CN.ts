@@ -2218,6 +2218,11 @@ Command: %3</source>
       <translation>缩放级别</translation>
     </message>
     <message>
+      <location filename="../src/app/mainwindow.cpp" line="1664" />
+      <source>Status message</source>
+      <translation>状态消息</translation>
+    </message>
+    <message>
       <location filename="../src/app/mainwindow.cpp" line="2383" />
       <location filename="../src/app/mainwindow.cpp" line="2390" />
       <source>Use current folder thumbnails</source>

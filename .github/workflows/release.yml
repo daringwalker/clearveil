@@ -118,9 +118,9 @@ jobs:
           path: release-input/*.pkg.tar.zst
           if-no-files-found: error
 
-  deb:
-    name: Debian package
-    runs-on: ubuntu-26.04
+  deb_ubuntu24:
+    name: Ubuntu 24.04 DEB
+    runs-on: ubuntu-24.04
     steps:
       - name: Install build dependencies
         run: |
@@ -129,33 +129,110 @@ jobs:
             build-essential cmake ninja-build pkg-config dpkg-dev file \
             qt6-base-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools \
             libexiv2-dev libcolord-dev libvips-dev \
-            libtesseract-dev tesseract-ocr-eng tesseract-ocr-chi-sim
+            libtesseract-dev tesseract-ocr tesseract-ocr-eng \
+            tesseract-ocr-chi-sim fonts-dejavu-core fonts-noto-cjk
 
       - name: Check out source
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
-      - name: Build Debian package
+      - name: Build, test, and package
         run: |
           cmake -S . -B build-deb -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=/usr \
-            -DBUILD_TESTING=OFF
+            -DBUILD_TESTING=ON \
+            -DCLEARVEIL_BUILD_BENCHMARKS=OFF
           cmake --build build-deb
+          ctest --test-dir build-deb --output-on-failure
+          tesseract --list-langs | grep -Fx eng
+          tesseract --list-langs | grep -Fx chi_sim
+          QT_QPA_PLATFORM=offscreen ./build-deb/tests/clearveil_tests \
+            ocrEngineRecognizesRenderedText \
+            ocrEngineRecognizesInstalledChineseModel -v1 2>&1 \
+            | tee /tmp/clearveil-ocr-test.log
+          grep -F "PASS   : CoreTest::ocrEngineRecognizesRenderedText()" \
+            /tmp/clearveil-ocr-test.log
+          grep -F "PASS   : CoreTest::ocrEngineRecognizesInstalledChineseModel()" \
+            /tmp/clearveil-ocr-test.log
           cpack --config build-deb/CPackConfig.cmake \
             -G DEB -B release-artifacts
           package="$(find release-artifacts -maxdepth 1 \
             -name '*.deb' -print -quit)"
           test -n "${package}"
           dpkg-deb --info "${package}"
+          architecture="$(dpkg-deb --field "${package}" Architecture)"
           normalized="${package//\~/.}"
-          if [[ "${normalized}" != "${package}" ]]; then
-            mv -- "${package}" "${normalized}"
-          fi
+          suffix="_${architecture}.deb"
+          base="${normalized%"${suffix}"}"
+          target="${base}_ubuntu24.04_${architecture}.deb"
+          mv -- "${package}" "${target}"
+
+      - name: Upload Ubuntu package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: clearveil-deb-ubuntu24-${{ github.ref_name }}
+          path: release-artifacts/*.deb
+          if-no-files-found: error
+
+  deb_debian13:
+    name: Debian 13 DEB
+    runs-on: ubuntu-latest
+    container: debian:13
+    steps:
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+            ca-certificates git build-essential cmake ninja-build pkg-config \
+            dpkg-dev file \
+            qt6-base-dev libqt6svg6-dev qt6-l10n-tools qt6-tools-dev-tools \
+            libexiv2-dev libcolord-dev libvips-dev \
+            libtesseract-dev tesseract-ocr \
+            tesseract-ocr-eng tesseract-ocr-chi-sim \
+            fonts-dejavu-core fonts-noto-cjk appstream desktop-file-utils
+
+      - name: Check out source
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Trust the container checkout
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
+      - name: Build, test, and package
+        run: |
+          cmake -S . -B build-deb -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=ON \
+            -DCLEARVEIL_BUILD_BENCHMARKS=OFF
+          cmake --build build-deb
+          ctest --test-dir build-deb --output-on-failure
+          tesseract --list-langs | grep -Fx eng
+          tesseract --list-langs | grep -Fx chi_sim
+          QT_QPA_PLATFORM=offscreen ./build-deb/tests/clearveil_tests \
+            ocrEngineRecognizesRenderedText \
+            ocrEngineRecognizesInstalledChineseModel -v1 2>&1 \
+            | tee /tmp/clearveil-ocr-test.log
+          grep -F "PASS   : CoreTest::ocrEngineRecognizesRenderedText()" \
+            /tmp/clearveil-ocr-test.log
+          grep -F "PASS   : CoreTest::ocrEngineRecognizesInstalledChineseModel()" \
+            /tmp/clearveil-ocr-test.log
+          cpack --config build-deb/CPackConfig.cmake \
+            -G DEB -B release-artifacts
+          package="$(find release-artifacts -maxdepth 1 \
+            -name '*.deb' -print -quit)"
+          test -n "${package}"
+          dpkg-deb --info "${package}"
+          architecture="$(dpkg-deb --field "${package}" Architecture)"
+          normalized="${package//\~/.}"
+          suffix="_${architecture}.deb"
+          base="${normalized%"${suffix}"}"
+          target="${base}_debian13_${architecture}.deb"
+          mv -- "${package}" "${target}"
 
       - name: Upload Debian package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: clearveil-deb-${{ github.ref_name }}
+          name: clearveil-deb-debian13-${{ github.ref_name }}
           path: release-artifacts/*.deb
           if-no-files-found: error
 
@@ -268,7 +345,7 @@ jobs:
 
   publish:
     name: Publish GitHub Release
-    needs: [source, arch, deb, rpm, appimage]
+    needs: [source, arch, deb_ubuntu24, deb_debian13, rpm, appimage]
     runs-on: ubuntu-latest
     steps:
       - name: Check out source

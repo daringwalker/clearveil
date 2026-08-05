@@ -27,7 +27,7 @@ ctest --test-dir build --output-on-failure
 
 ## 代码约定
 
-- 使用 C++20 和 Qt 6.6 可用的 API；
+- 使用 C++20 和 Qt 6.4 可用的 API；使用较新 Qt API 时必须提供版本保护或兼容实现；
 - 后台线程不直接访问 QWidget 或当前文档；
 - 新的可复用状态机放入明确控制器或模型，不继续扩充 `MainWindow`；
 - 避免无关的大规模格式化、类名和翻译上下文变化；

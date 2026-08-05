@@ -20,7 +20,8 @@ require_one() {
 
 require_one "source archive" "clearveil-${version}-Source.tar.gz"
 require_one "Arch Linux package" "clearveil-*.pkg.tar.zst"
-require_one "Debian package" "clearveil_*.deb"
+require_one "Ubuntu 24.04 package" "clearveil_*_ubuntu24.04_*.deb"
+require_one "Debian 13 package" "clearveil_*_debian13_*.deb"
 require_one "RPM package" "clearveil-*.rpm"
 require_one "AppImage" "Clearveil-${version}-x86_64.AppImage"
 require_one "release PKGBUILD" "PKGBUILD"

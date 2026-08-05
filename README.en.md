@@ -66,7 +66,7 @@ source links, and usage information. NASA does not endorse Clearveil.
 
 ## Build
 
-Clearveil requires C++20, CMake 3.24+, Qt 6.6+, and libvips. Exiv2 enables full
+Clearveil requires C++20, CMake 3.24+, Qt 6.4+, and libvips. Exiv2 enables full
 metadata support.
 
 ```bash
@@ -83,7 +83,7 @@ See the [build guide](docs/development/building.md), the
 [contribution guide](CONTRIBUTING.md) for more information.
 
 The first public version uses the `v0.2.0-beta.1` prerelease tag. GitHub Release
-provides CI-built Arch Linux, DEB, RPM, and AppImage packages alongside the
+provides CI-built Arch Linux, Ubuntu 24.04 DEB, Debian 13 DEB, RPM, and AppImage packages alongside the
 source archive, SHA-256 checksums, and a PKGBUILD carrying the archive's actual
 checksum. See the
 [release procedure](docs/development/releasing.md) for the complete process.

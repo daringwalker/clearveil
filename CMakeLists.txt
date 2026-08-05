@@ -30,7 +30,7 @@ option(CLEARVEIL_WARNINGS_AS_ERRORS
 option(CLEARVEIL_ENABLE_OCR
     "Enable Tesseract-backed image text recognition when available" ON)
 
-find_package(Qt6 6.6 REQUIRED COMPONENTS
+find_package(Qt6 6.4 REQUIRED COMPONENTS
     Concurrent Core DBus Gui Network PrintSupport Svg Widgets)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(EXIV2 QUIET IMPORTED_TARGET exiv2)
@@ -134,6 +134,10 @@ add_library(clearveil_core
     src/ui/panels/panellayoutcontroller.h
     src/ui/panels/paneltitlebar.cpp
     src/ui/panels/paneltitlebar.h
+    src/ui/selectablelabel.cpp
+    src/ui/selectablelabel.h
+    src/ui/selectablestatusbar.cpp
+    src/ui/selectablestatusbar.h
     src/filmstrip/persistentthumbnailcache.cpp
     src/filmstrip/persistentthumbnailcache.h
     src/workflows/slideshowcontroller.cpp
@@ -246,7 +250,7 @@ install(FILES packaging/clearveil.1
 include(cmake/ClearveilPackaging.cmake)
 
 if(BUILD_TESTING)
-    find_package(Qt6 6.6 REQUIRED COMPONENTS Test)
+    find_package(Qt6 6.4 REQUIRED COMPONENTS Test)
     add_subdirectory(tests)
 endif()
 

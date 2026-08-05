@@ -37,6 +37,13 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release version="0.2.0-beta.2" date="2026-08-05" type="development">
+      <description>
+        <p>Adds native Ubuntu 24.04 and Debian 13 packages with OCR verification,
+        lowers the minimum Qt version to 6.4, and makes metadata and status text
+        selectable without duplicate rendering or conflicting row highlights.</p>
+      </description>
+    </release>
     <release version="0.2.0-beta.1" date="2026-08-05" type="development">
       <description>
         <p>Beta release with responsive asynchronous browsing, configurable

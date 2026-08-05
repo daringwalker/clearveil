@@ -4,6 +4,7 @@
 #include "framecontroller.h"
 #include "imagedocument.h"
 #include "imagesessioncontroller.h"
+#include "selectablestatusbar.h"
 
 #include <QList>
 #include <QMainWindow>
@@ -61,6 +62,7 @@ public:
     bool openPath(const QString &path);
     bool openPaths(const QStringList &paths);
     void present();
+    [[nodiscard]] SelectableStatusBar *statusBar() const;
 
 protected:
     void changeEvent(QEvent *event) override;

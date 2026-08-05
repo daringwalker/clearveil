@@ -57,7 +57,7 @@ Image and Video Library，具体图片编号、来源链接和使用说明见
 
 ## 构建
 
-Clearveil 需要 C++20、CMake 3.24+、Qt 6.6+、libvips，完整元数据支持需要 Exiv2。
+Clearveil 需要 C++20、CMake 3.24+、Qt 6.4+、libvips，完整元数据支持需要 Exiv2。
 
 ```bash
 cmake -S . -B build -G Ninja \
@@ -73,7 +73,7 @@ ctest --test-dir build --output-on-failure
 [格式支持](docs/user/supported-formats.md)。
 
 首个公开版本采用 `v0.2.0-beta.1` 预发布标签。GitHub Release 提供经过 CI 验证的源码包、
-Arch Linux 包、DEB、RPM、AppImage、SHA-256 和带真实校验和的 PKGBUILD；完整发布步骤见
+Arch Linux 包、Ubuntu 24.04 DEB、Debian 13 DEB、RPM、AppImage、SHA-256 和带真实校验和的 PKGBUILD；完整发布步骤见
 [GitHub 发布流程](docs/development/releasing.md)。
 
 性能基准默认不参与普通构建，需要时显式启用：

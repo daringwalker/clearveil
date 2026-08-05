@@ -35,6 +35,8 @@
 #include "panellayoutcontroller.h"
 #include "paneltitlebar.h"
 #include "persistentthumbnailcache.h"
+#include "selectablelabel.h"
+#include "selectablestatusbar.h"
 #include "slideshowcontroller.h"
 #include "systemappearancecontroller.h"
 #include "thumbnailmodel.h"
@@ -442,6 +444,12 @@ MainWindow::MainWindow(QWidget *parent)
     updateFrameControls();
     updateStatus();
     loadSettings();
+}
+
+SelectableStatusBar *MainWindow::statusBar() const
+{
+    return static_cast<SelectableStatusBar *>(
+        QMainWindow::statusBar());
 }
 
 bool MainWindow::openPath(const QString &path)
@@ -1522,6 +1530,8 @@ void MainWindow::updateNavigationActions()
 
 void MainWindow::buildUi()
 {
+    setStatusBar(new SelectableStatusBar(this));
+
     auto *central = new QWidget(this);
     auto *layout = new QVBoxLayout(central);
     layout->setContentsMargins(0, 0, 0, 0);
@@ -1552,7 +1562,7 @@ void MainWindow::buildUi()
         button->setAutoRaise(true);
         frameLayout->addWidget(button);
     }
-    m_frameLabel = new QLabel(frameBar);
+    m_frameLabel = new SelectableLabel(frameBar);
     m_frameLabel->setObjectName(
         QStringLiteral("currentFrameLabel"));
     m_frameLabel->setAccessibleName(tr("Current frame"));
@@ -1636,15 +1646,15 @@ void MainWindow::buildUi()
     resizeDocks({m_filmstripDock}, {108}, Qt::Vertical);
     setCentralWidget(central);
 
-    m_fileLabel = new QLabel(this);
+    m_fileLabel = new SelectableLabel(this);
     m_fileLabel->setObjectName(
         QStringLiteral("currentFileLabel"));
     m_fileLabel->setAccessibleName(tr("Current image"));
-    m_detailLabel = new QLabel(this);
+    m_detailLabel = new SelectableLabel(this);
     m_detailLabel->setObjectName(
         QStringLiteral("imageDetailsLabel"));
     m_detailLabel->setAccessibleName(tr("Image details"));
-    m_zoomLabel = new QLabel(this);
+    m_zoomLabel = new SelectableLabel(this);
     m_zoomLabel->setObjectName(
         QStringLiteral("zoomLevelLabel"));
     m_zoomLabel->setAccessibleName(tr("Zoom level"));
@@ -1652,6 +1662,9 @@ void MainWindow::buildUi()
     statusBar()->addWidget(m_fileLabel, 1);
     statusBar()->addPermanentWidget(m_detailLabel);
     statusBar()->addPermanentWidget(m_zoomLabel);
+    statusBar()->setPrimaryWidget(m_fileLabel);
+    statusBar()->messageLabel()->setAccessibleName(
+        tr("Status message"));
 
     m_metadataDock = new QDockWidget(QString(), this);
     m_metadataDock->setObjectName(QStringLiteral("metadataDock"));
@@ -1904,7 +1917,7 @@ void MainWindow::buildUi()
     });
     connect(m_browserFileOperationsController,
             &BrowserFileOperationsController::statusMessage,
-            statusBar(), &QStatusBar::showMessage);
+            statusBar(), &SelectableStatusBar::showMessage);
     connect(m_browserFileOperationsController,
             &BrowserFileOperationsController::operationCompleted,
             this, [this](

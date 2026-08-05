@@ -26,13 +26,16 @@ GitHub 自动生成的 tag archive 也可以作为 Arch 包源，但必须记录
 推送与 `VERSION` 一致的 `v*` 标签后，Release 工作流默认并行生成以下 x86_64 产物：
 
 - Arch Linux：由 `makepkg` 在官方 Arch 容器中生成 `.pkg.tar.zst`；
-- Debian/Ubuntu：由 CPack 在 Ubuntu 26.04 中生成 `.deb`，依赖由
-  `dpkg-shlibdeps` 从实际链接库计算；
+- Ubuntu 24.04：由 CPack 在 Ubuntu 24.04 原生环境生成带 `_ubuntu24.04_` 标识的
+  `.deb`；
+- Debian 13：由 CPack 在 Debian 13 原生容器生成带 `_debian13_` 标识的 `.deb`；
+- 两种 DEB 的依赖均由 `dpkg-shlibdeps` 从实际链接库计算，并推荐安装英文和简体中文
+  Tesseract 模型；
 - Fedora/RHEL 系：由 CPack/rpmbuild 在 Fedora 44 中生成 `.rpm`；
 - 通用包：在 Ubuntu 22.04 基线上使用 Qt 6.8 LTS 和 linuxdeploy 生成
   `.AppImage`，同时打包 Qt 的 X11 与 Wayland 平台插件。
 
-工作流只有在四种二进制包、源码包和发布用 PKGBUILD 全部存在时才会发布，并为全部
+工作流只有在五种二进制产物、源码包和发布用 PKGBUILD 全部存在时才会发布，并为全部
 产物重新生成统一的 `SHA256SUMS`。DEB/RPM/Arch 包使用发行版依赖；AppImage 打包核心
 运行库，但额外图片编解码插件和 OCR 语言模型仍可由系统提供。
 

@@ -51,6 +51,7 @@ add_test(NAME clearveil_regression_input
         ocrCanvasSupportsMouseSelection
         mainWindowOcrWorkflowCopiesRecognizedText
         canvasGesturesZoomAndPanIncrementally
+        metadataPanelShowsPresentEmbeddedMetadata
         viewerStatusExposesAccessibleNames
         singleInstanceForwardsExactlyOnce)
 

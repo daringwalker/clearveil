@@ -1,5 +1,7 @@
 #include "metadatapanel.h"
 
+#include "selectablelabel.h"
+
 #include <QColorSpace>
 #include <QFileInfo>
 #include <QHeaderView>
@@ -7,6 +9,7 @@
 #include <QLocale>
 #include <QPainter>
 #include <QPainterPath>
+#include <QSizePolicy>
 #include <QTabWidget>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -107,12 +110,18 @@ MetadataPanel::MetadataPanel(QWidget *parent)
     m_tree->header()->setSectionResizeMode(1, QHeaderView::Stretch);
     m_tree->header()->setMinimumSectionSize(72);
     m_tree->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // The panel selects text inside its cell widgets, not whole metadata rows.
+    // A row highlight underneath the text selection makes the actual copied
+    // range difficult to distinguish.
+    m_tree->setSelectionMode(QAbstractItemView::NoSelection);
     m_tree->setAlternatingRowColors(true);
     m_tree->setAnimated(true);
     m_tree->setRootIsDecorated(true);
     m_tree->setIndentation(0);
     m_tree->setItemsExpandable(true);
-    m_tree->setUniformRowHeights(true);
+    // Cell widgets provide the only visible text. Their height can differ from
+    // the item delegate's default height, so each row supplies its own hint.
+    m_tree->setUniformRowHeights(false);
     m_tree->setWordWrap(false);
     m_tree->setTextElideMode(Qt::ElideRight);
     m_tree->setAccessibleName(tr("Image metadata"));
@@ -231,7 +240,8 @@ void MetadataPanel::addRow(const QString &name, const QString &value,
 
     QTreeWidgetItem *groupItem = m_groups.value(cleanGroup);
     if (!groupItem) {
-        groupItem = new QTreeWidgetItem(m_tree, {cleanGroup});
+        groupItem = new QTreeWidgetItem(m_tree);
+        groupItem->setData(0, Qt::UserRole, cleanGroup);
         QFont groupFont = groupItem->font(0);
         groupFont.setBold(true);
         groupItem->setFont(0, groupFont);
@@ -239,12 +249,46 @@ void MetadataPanel::addRow(const QString &name, const QString &value,
         groupItem->setFlags(groupItem->flags() & ~Qt::ItemIsSelectable);
         m_tree->setFirstColumnSpanned(
             m_tree->indexOfTopLevelItem(groupItem), QModelIndex(), true);
+        auto *groupLabel = new SelectableLabel(cleanGroup, m_tree);
+        groupLabel->setObjectName(
+            QStringLiteral("metadataGroupText"));
+        groupLabel->setFont(groupFont);
+        groupLabel->setToolTip(cleanGroup);
+        groupLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+        groupLabel->setMinimumWidth(0);
+        groupLabel->setSizePolicy(QSizePolicy::Ignored,
+                                  QSizePolicy::Preferred);
+        groupItem->setSizeHint(
+            0, QSize(0, groupLabel->sizeHint().height() + 2));
+        m_tree->setItemWidget(groupItem, 0, groupLabel);
         m_groups.insert(cleanGroup, groupItem);
     }
 
-    auto *propertyItem =
-        new QTreeWidgetItem(groupItem, {cleanName, cleanValue});
+    auto *propertyItem = new QTreeWidgetItem(groupItem);
+    propertyItem->setData(0, Qt::UserRole, cleanName);
+    propertyItem->setData(1, Qt::UserRole, cleanValue);
     propertyItem->setToolTip(0, sourceKey.trimmed().isEmpty()
         ? cleanName : sourceKey.trimmed());
     propertyItem->setToolTip(1, cleanValue);
+
+    auto *nameLabel = new SelectableLabel(cleanName, m_tree);
+    nameLabel->setObjectName(QStringLiteral("metadataPropertyText"));
+    nameLabel->setToolTip(propertyItem->toolTip(0));
+    nameLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    nameLabel->setMinimumWidth(0);
+    nameLabel->setSizePolicy(QSizePolicy::Ignored,
+                             QSizePolicy::Preferred);
+    auto *valueLabel = new SelectableLabel(cleanValue, m_tree);
+    valueLabel->setObjectName(QStringLiteral("metadataValueText"));
+    valueLabel->setToolTip(cleanValue);
+    valueLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    valueLabel->setMinimumWidth(0);
+    valueLabel->setSizePolicy(QSizePolicy::Ignored,
+                              QSizePolicy::Preferred);
+    const int rowHeight = std::max(nameLabel->sizeHint().height(),
+                                   valueLabel->sizeHint().height()) + 2;
+    propertyItem->setSizeHint(0, QSize(0, rowHeight));
+    propertyItem->setSizeHint(1, QSize(0, rowHeight));
+    m_tree->setItemWidget(propertyItem, 0, nameLabel);
+    m_tree->setItemWidget(propertyItem, 1, valueLabel);
 }

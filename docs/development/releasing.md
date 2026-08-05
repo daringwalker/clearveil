@@ -36,19 +36,22 @@ Clearveil 的首个公开版本为 `v0.2.0-beta.1`。根目录 `VERSION` 是应�
 使用签名标签启动 GitHub Release 工作流：
 
 ```bash
-bash tools/check_release_version.sh v0.2.0-beta.1
-git tag -s v0.2.0-beta.1 -m "Clearveil 0.2.0 beta 1"
-git push origin main v0.2.0-beta.1
+bash tools/check_release_version.sh v0.2.0-beta.2
+git tag -s v0.2.0-beta.2 -m "Clearveil 0.2.0 beta 2"
+git push origin main v0.2.0-beta.2
 ```
 
-工作流会重新构建和测试，默认生成 Arch Linux、DEB、RPM、AppImage、源码包和写入
+工作流会重新构建和测试，默认生成 Arch Linux、Ubuntu 24.04 DEB、Debian 13 DEB、
+RPM、AppImage、源码包和写入
 真实源码包校验和的 `PKGBUILD`。全部任务完成后才会生成覆盖所有附件的
 `SHA256SUMS` 并创建 GitHub Release；预发布标签会自动创建为 GitHub prerelease。
 
 ## 发布后
 
 - 下载所有发布附件并使用 `SHA256SUMS` 验证；
-- 分别在干净 Arch、Ubuntu、Fedora 环境安装和卸载对应原生包；
+- 分别在干净 Arch、Ubuntu 24.04、Debian 13、Fedora 环境安装和卸载对应原生包；
+- 在 Ubuntu 24.04 和 Debian 13 中确认 `eng`、`chi_sim` 模型可发现，并完成中英文
+  OCR 实际识别测试；
 - 在不安装 Clearveil 运行依赖的兼容系统上验证 AppImage 启动、X11/Wayland 与打开图片；
 - 将最终校验和同步回仓库中的 `packaging/PKGBUILD`；
 - 检查 GitHub Release、CI、CodeQL 和 Dependabot 状态；

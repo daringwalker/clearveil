@@ -92,7 +92,9 @@ void applyGroup(QPalette &palette,
     palette.setColor(group, QPalette::Shadow, colors.shadow);
     palette.setColor(group, QPalette::PlaceholderText,
                      colors.inactiveText);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
     palette.setColor(group, QPalette::Accent, colors.selection);
+#endif
 }
 }
 

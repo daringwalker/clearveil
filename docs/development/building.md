@@ -5,7 +5,7 @@
 - 支持 C++20 的 GCC 或 Clang
 - CMake 3.24+
 - Ninja
-- Qt 6.6+：Core、Gui、Widgets、Concurrent、DBus、Network、PrintSupport、Svg
+- Qt 6.4+：Core、Gui、Widgets、Concurrent、DBus、Network、PrintSupport、Svg
 - Qt Linguist 的 `lrelease6`
 - pkg-config
 - libvips
@@ -25,7 +25,7 @@ sudo pacman -S --needed base-devel cmake ninja pkgconf \
   qt6-base qt6-svg qt6-tools exiv2 colord libvips
 sudo pacman -S --needed tesseract tesseract-data-eng tesseract-data-chi_sim
 
-# Debian / Ubuntu
+# Ubuntu 24.04 / Debian 13
 sudo apt install build-essential cmake ninja-build pkg-config \
   qt6-base-dev libqt6svg6-dev qt6-l10n-tools \
   libexiv2-dev libcolord-dev libvips-dev
@@ -49,6 +49,11 @@ CMake 找不到 Tesseract 时仍可构建查看器，但“文字选择工具”
 不含 OCR，并给出当前发行版的软件包名和安装命令。识别语言由系统安装的 traineddata 决定；
 Clearveil 会自动组合所有已安装的 Tesseract 文字识别模型（不包含仅用于方向检测的 `osd`），与系统或界面语言无关，也不会下载或缓存识别模型。
 打包者也可使用 `-DCLEARVEIL_ENABLE_OCR=OFF` 明确构建不含 OCR 的版本。
+
+GitHub Release 分别提供在 Ubuntu 24.04 和 Debian 13 原生环境中构建的 DEB。请选择
+文件名中带 `_ubuntu24.04_` 或 `_debian13_` 的对应包；原生包使用各自发行版的 Qt、
+Exiv2、libvips 和 Tesseract ABI，不应把某个较新发行版生成的 DEB 当作通用包使用。
+需要跨发行版安装时优先选择 AppImage。
 
 ## 配置、构建和测试
 

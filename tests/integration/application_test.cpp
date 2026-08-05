@@ -3242,6 +3242,7 @@ void CoreTest::metadataPanelShowsPresentEmbeddedMetadata()
              QHeaderView::Stretch);
     QCOMPARE(tree->header()->sectionResizeMode(1),
              QHeaderView::Stretch);
+    QCOMPARE(tree->selectionMode(), QAbstractItemView::NoSelection);
     QVERIFY(!tree->wordWrap());
     bool foundAuthor = false;
     bool foundEmbeddedTextGroup = false;
@@ -3250,35 +3251,74 @@ void CoreTest::metadataPanelShowsPresentEmbeddedMetadata()
          ++groupIndex) {
         QTreeWidgetItem *group = tree->topLevelItem(groupIndex);
         QVERIFY(group);
-        QVERIFY(!group->text(0).trimmed().isEmpty());
+        // QTreeWidgetItem retains only structure/data. SelectableLabel is the
+        // sole visual text layer, preventing transparent double painting.
+        QVERIFY(group->text(0).isEmpty());
+        const QString groupText =
+            group->data(0, Qt::UserRole).toString();
+        QVERIFY(!groupText.trimmed().isEmpty());
         QVERIFY(group->isExpanded());
         group->setExpanded(false);
         QVERIFY(!group->isExpanded());
         group->setExpanded(true);
         QVERIFY(group->isExpanded());
-        if (group->text(0).contains(QStringLiteral("Embedded text")))
+        if (groupText.contains(QStringLiteral("Embedded text")))
             foundEmbeddedTextGroup = true;
         for (int childIndex = 0; childIndex < group->childCount();
              ++childIndex) {
             QTreeWidgetItem *property = group->child(childIndex);
             QVERIFY(property);
-            QVERIFY(!property->text(0).trimmed().isEmpty());
-            QVERIFY(!property->text(1).trimmed().isEmpty());
-            QVERIFY(!property->text(0).contains(QStringLiteral(" · ")));
-            const QString fingerprint = group->text(0) + QChar(0x1e)
-                + property->text(0) + QChar(0x1f) + property->text(1);
+            QVERIFY(property->text(0).isEmpty());
+            QVERIFY(property->text(1).isEmpty());
+            const QString propertyText =
+                property->data(0, Qt::UserRole).toString();
+            const QString valueText =
+                property->data(1, Qt::UserRole).toString();
+            QVERIFY(!propertyText.trimmed().isEmpty());
+            QVERIFY(!valueText.trimmed().isEmpty());
+            QVERIFY(!propertyText.contains(QStringLiteral(" · ")));
+            const QString fingerprint = groupText + QChar(0x1e)
+                + propertyText + QChar(0x1f) + valueText;
             QVERIFY2(!rows.contains(fingerprint),
                      qPrintable(QStringLiteral("Duplicate metadata row: %1")
                                     .arg(fingerprint)));
             rows.insert(fingerprint);
-            if (property->text(0).contains(QStringLiteral("Author"))
-                && property->text(1) == QStringLiteral("Clearveil Test")) {
+            if (propertyText.contains(QStringLiteral("Author"))
+                && valueText == QStringLiteral("Clearveil Test")) {
                 foundAuthor = true;
             }
         }
     }
     QVERIFY(foundEmbeddedTextGroup);
     QVERIFY(foundAuthor);
+
+    const auto groupLabels = tree->findChildren<QLabel *>(
+        QStringLiteral("metadataGroupText"));
+    const auto propertyLabels = tree->findChildren<QLabel *>(
+        QStringLiteral("metadataPropertyText"));
+    const auto valueLabels = tree->findChildren<QLabel *>(
+        QStringLiteral("metadataValueText"));
+    QVERIFY(!groupLabels.isEmpty());
+    QVERIFY(!propertyLabels.isEmpty());
+    QVERIFY(!valueLabels.isEmpty());
+
+    QLabel *authorValueLabel = nullptr;
+    for (QLabel *label : valueLabels) {
+        if (label->text() == QStringLiteral("Clearveil Test")) {
+            authorValueLabel = label;
+            break;
+        }
+    }
+    QVERIFY(authorValueLabel);
+    QVERIFY(authorValueLabel->textInteractionFlags()
+            & Qt::TextSelectableByMouse);
+    QVERIFY(authorValueLabel->textInteractionFlags()
+            & Qt::TextSelectableByKeyboard);
+    authorValueLabel->setSelection(0, authorValueLabel->text().size());
+    QApplication::clipboard()->clear();
+    QTest::keyClick(authorValueLabel, Qt::Key_C, Qt::ControlModifier);
+    QCOMPARE(QApplication::clipboard()->text(),
+             QStringLiteral("Clearveil Test"));
 }
 
 void CoreTest::browserRefreshesItsViewportPalette()
@@ -4848,7 +4888,29 @@ void CoreTest::viewerStatusExposesAccessibleNames()
         QVERIFY2(label, expected.objectName);
         QCOMPARE(label->accessibleName(),
                  QString::fromLatin1(expected.accessibleName));
+        QVERIFY(label->textInteractionFlags()
+                & Qt::TextSelectableByMouse);
+        QVERIFY(label->textInteractionFlags()
+                & Qt::TextSelectableByKeyboard);
     }
+
+    auto *messageLabel = window.findChild<QLabel *>(
+        QStringLiteral("statusMessageLabel"));
+    QVERIFY(messageLabel);
+    QCOMPARE(messageLabel->accessibleName(),
+             QStringLiteral("Status message"));
+    window.statusBar()->showMessage(
+        QStringLiteral("Copyable status message"));
+    QCOMPARE(window.statusBar()->currentMessage(),
+             QStringLiteral("Copyable status message"));
+    QVERIFY(!messageLabel->isHidden());
+    messageLabel->setSelection(0, messageLabel->text().size());
+    QApplication::clipboard()->clear();
+    QTest::keyClick(messageLabel, Qt::Key_C, Qt::ControlModifier);
+    QCOMPARE(QApplication::clipboard()->text(),
+             QStringLiteral("Copyable status message"));
+    window.statusBar()->clearMessage();
+    QVERIFY(messageLabel->isHidden());
 }
 
 void CoreTest::windowModesCanCombineAndFitImage()

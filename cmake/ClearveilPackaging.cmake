@@ -26,6 +26,10 @@ set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_CONTACT}")
 set(CPACK_DEBIAN_PACKAGE_SECTION "graphics")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+if(TARGET PkgConfig::TESSERACT)
+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS
+        "tesseract-ocr-eng, tesseract-ocr-chi-sim")
+endif()
 
 set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
 set(CPACK_RPM_PACKAGE_VERSION "${CLEARVEIL_RPM_VERSION}")
@@ -41,17 +45,17 @@ set(CPACK_SOURCE_IGNORE_FILES
     "/build[^/]*/"
     "/cmake-build-[^/]*/"
     "/dist/"
-    "/\\.git/"
-    "/\\.agents/"
-    "/\\.codex/"
-    "/\\.flatpak-builder/"
-    "/\\.cache/"
+    "/[.]git/"
+    "/[.]agents/"
+    "/[.]codex/"
+    "/[.]flatpak-builder/"
+    "/[.]cache/"
     "/CMakeFiles/"
-    "/CMakeCache\\.txt$"
-    "/cmake_install\\.cmake$"
+    "/CMakeCache[.]txt$"
+    "/cmake_install[.]cmake$"
     "/Makefile$"
     "/_CPack_Packages/"
-    "/compile_commands\\.json$"
+    "/compile_commands[.]json$"
     "~$"
 )
 
