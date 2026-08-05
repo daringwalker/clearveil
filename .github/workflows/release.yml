@@ -147,6 +147,10 @@ jobs:
             -name '*.deb' -print -quit)"
           test -n "${package}"
           dpkg-deb --info "${package}"
+          normalized="${package//\~/.}"
+          if [[ "${normalized}" != "${package}" ]]; then
+            mv -- "${package}" "${normalized}"
+          fi
 
       - name: Upload Debian package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -187,6 +191,10 @@ jobs:
             -name '*.rpm' -print -quit)"
           test -n "${package}"
           rpm -qip "${package}"
+          normalized="${package//\~/.}"
+          if [[ "${normalized}" != "${package}" ]]; then
+            mv -- "${package}" "${normalized}"
+          fi
 
       - name: Upload RPM package
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
