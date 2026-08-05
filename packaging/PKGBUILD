@@ -9,6 +9,7 @@ license=(GPL-3.0-or-later)
 options=(!debug)
 depends=(qt6-base qt6-svg exiv2 libcolord libvips tesseract tesseract-data-eng)
 makedepends=(cmake ninja qt6-tools)
+checkdepends=(ttf-dejavu)
 optdepends=(
   'kimageformats: support additional image formats'
   'qt6-imageformats: support additional Qt image formats'

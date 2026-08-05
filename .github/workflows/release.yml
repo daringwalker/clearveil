@@ -90,6 +90,7 @@ jobs:
           qt6-base qt6-svg qt6-tools
           exiv2 libcolord libvips
           tesseract tesseract-data-eng tesseract-data-chi_sim
+          ttf-dejavu
 
       - name: Download source inputs
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -213,10 +214,10 @@ jobs:
         run: |
           python3 -m venv /tmp/clearveil-build-tools
           /tmp/clearveil-build-tools/bin/pip install \
-            cmake==4.4.2 ninja aqtinstall
+            cmake==4.4.2 ninja aqtinstall==3.3.0
           /tmp/clearveil-build-tools/bin/aqt install-qt \
             linux desktop 6.8.3 linux_gcc_64 \
-            -O /tmp/Qt --modules qtsvg qttools qtimageformats qtwayland
+            -O /tmp/Qt --modules qtimageformats
           echo "/tmp/clearveil-build-tools/bin" >> "${GITHUB_PATH}"
           echo "/tmp/Qt/6.8.3/gcc_64/bin" >> "${GITHUB_PATH}"
           echo "/tmp/clearveil-appimage-tools" >> "${GITHUB_PATH}"
