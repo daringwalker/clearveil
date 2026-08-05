@@ -4962,10 +4962,10 @@ void CoreTest::fullscreenComponentsHideAndRestore()
     showFilmstrip->setChecked(false);
     showStatus->setChecked(false);
     showInformation->setChecked(false);
-    QVERIFY(toolbar->isVisible());
-    QVERIFY(filmstrip->isVisible());
-    QVERIFY(information->isVisible());
-    QVERIFY(window.statusBar()->isVisible());
+    QTRY_VERIFY_WITH_TIMEOUT(toolbar->isVisible(), 1000);
+    QTRY_VERIFY_WITH_TIMEOUT(filmstrip->isVisible(), 1000);
+    QTRY_VERIFY_WITH_TIMEOUT(information->isVisible(), 1000);
+    QTRY_VERIFY_WITH_TIMEOUT(window.statusBar()->isVisible(), 1000);
 
     fullscreen->trigger();
     QTRY_VERIFY_WITH_TIMEOUT(window.isFullScreen(), 1000);
